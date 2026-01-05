@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-bodoni: var(--font-bodoni);
+  --font-dm: var(--font-dm-sans);
+  --font-jost: var(--font-jost);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Custom Swiper Styles */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #445EF2 !important;
+  background: white;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 20 !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: #445EF2;
+  color: white !important;
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    display: none !important;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
