@@ -10,37 +10,37 @@ import mainLogo from '@/assets/logotype/main.png';
 
 const Nav = memo(() => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuAnimating, setMenuAnimating] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Next.js specific hook for route changes
   const pathname = usePathname();
   const isHome = pathname === '/';
 
   const navLinks = useMemo(() => [
     { name: 'ACCUEIL', path: '/' },
-    { name: 'PROJETS', path: '/portfolio' },
+    { name: 'PROJETS', path: '/projects' },
     { name: 'SERVICES', path: '/services' },
     { name: 'À PROPOS DE NOUS', path: '/about' },
     { name: 'BLOG', path: '/blog' },
   ], []);
 
-  // Handle Scroll Logic
+
+
+  // Scroll logic
   useEffect(() => {
     let scrollTimer: NodeJS.Timeout;
+
     const handleScroll = () => {
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
         const scrollY = window.scrollY;
+
+        // Background color threshold
         let scrollThreshold;
-
-        if (window.innerWidth >= 1280) {
-          scrollThreshold = 1300;
-        } else if (window.innerWidth >= 768) {
-          scrollThreshold = 1100;
-        } else {
-          scrollThreshold = 700;
-        }
-
+        if (window.innerWidth >= 1280) scrollThreshold = 1300;
+        else if (window.innerWidth >= 768) scrollThreshold = 1100;
+        else scrollThreshold = 700;
         setScrolled(scrollY > scrollThreshold);
       }, 10);
     };
@@ -48,9 +48,7 @@ const Nav = memo(() => {
     let resizeTimer: NodeJS.Timeout;
     const handleResize = () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        handleScroll();
-      }, 150);
+      resizeTimer = setTimeout(handleScroll, 150);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -63,42 +61,45 @@ const Nav = memo(() => {
       clearTimeout(scrollTimer);
       clearTimeout(resizeTimer);
     };
-  }, []);
+  }, [isHome]);
 
   // Close menu on route change
   useEffect(() => {
-    setMenuOpen(false);
+    closeMenu();
   }, [pathname]);
 
   // Lock body scroll when menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    document.body.style.overflow = menuOpen ? 'hidden' : 'unset';
+    return () => { document.body.style.overflow = 'unset'; };
   }, [menuOpen]);
 
   const shouldUseDarkColors = scrolled || !isHome;
 
-  const toggleMenu = useCallback(() => {
-    setMenuOpen(prev => !prev);
+  const openMenu = useCallback(() => {
+    setMenuOpen(true);
+    setMenuVisible(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setMenuAnimating(true));
+    });
   }, []);
 
   const closeMenu = useCallback(() => {
+    setMenuAnimating(false);
     setMenuOpen(false);
+    const timer = setTimeout(() => setMenuVisible(false), 500);
+    return () => clearTimeout(timer);
   }, []);
+
+  const toggleMenu = useCallback(() => {
+    if (menuOpen) closeMenu();
+    else openMenu();
+  }, [menuOpen, openMenu, closeMenu]);
 
   // Close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && menuOpen) {
-        closeMenu();
-      }
+      if (e.key === 'Escape' && menuOpen) closeMenu();
     };
     if (menuOpen) {
       document.addEventListener('keydown', handleEscape);
@@ -108,19 +109,19 @@ const Nav = memo(() => {
 
   return (
     <>
-      <nav className={`w-full sticky top-0 z-50 ${!isHome
-          ? 'bg-white'
-          : isHome && scrolled
+      <nav
+        className={`w-full sticky top-0 z-50 ${!isHome
             ? 'bg-white'
-            : 'bg-transparent backdrop-blur-sm'
-        } transition-colors duration-300`}>
-
+            : scrolled
+              ? 'bg-white shadow-sm'
+              : 'bg-transparent backdrop-blur-sm'
+          } transition-all duration-500 ease-in-out`}
+      >
         <div className="w-[90%] m-auto">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link href="/" className="flex items-center py-4 sm:px-6 z-60 relative" aria-label="Landmark - Retour à l'accueil">
               <img
-                // Use .src because Next.js imports images as objects
                 src={shouldUseDarkColors || menuOpen ? mainLogo.src : whiteLogo.src}
                 alt="Landmark - Agence Marketing Digital"
                 className="w-28 sm:w-40"
@@ -189,24 +190,32 @@ const Nav = memo(() => {
       </nav>
 
       {/* Mobile Menu Overlay */}
-      {menuOpen && (
+      {menuVisible && (
         <div
           id="mobile-menu"
-          className="xl:hidden fixed inset-0 z-40 bg-white"
+          className={`xl:hidden fixed inset-0 z-40 bg-white transform transition-transform duration-500 ease-in-out ${menuAnimating ? 'translate-y-0' : '-translate-y-full'
+            }`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="mobile-menu-title"
         >
           <div className="flex flex-col justify-center items-center h-full px-8">
             <h2 id="mobile-menu-title" className="sr-only">Menu de navigation</h2>
+
             <div className="flex flex-col mt-30 space-y-8 text-center">
-              {navLinks.map(link => (
+              {navLinks.map((link, index) => (
                 <Link
                   key={link.path}
                   href={link.path}
-                  // Fixed: Moved hover class inside className
                   className={`text-xl sm:text-2xl relative block group text-black hover:text-[#445EF2] ${pathname === link.path ? 'font-semibold' : ''
-                    } transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#445EF2] focus:ring-offset-2 rounded`}
+                    } transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#445EF2] focus:ring-offset-2 rounded ${menuAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+                    }`}
+                  style={{
+                    transitionDelay: menuAnimating ? `${150 + index * 60}ms` : '0ms',
+                    transitionProperty: 'opacity, transform',
+                    transitionDuration: '400ms',
+                    transitionTimingFunction: 'ease-out',
+                  }}
                   onClick={closeMenu}
                   aria-current={pathname === link.path ? 'page' : undefined}
                 >
@@ -221,7 +230,14 @@ const Nav = memo(() => {
 
               <Link
                 href="/contact"
-                className="bg-transparent text-black border-black border text-sm sm:text-xl px-6 py-3 transition-all duration-300 hover:bg-[#445EF2] hover:border-[#445EF2] hover:text-white mt-8 focus:outline-none focus:ring-2 focus:ring-[#445EF2] focus:ring-offset-2 rounded"
+                className={`bg-transparent text-black border-black border text-sm sm:text-xl px-6 py-3 transition-all duration-500 hover:bg-[#445EF2] hover:border-[#445EF2] hover:text-white mt-8 focus:outline-none focus:ring-2 focus:ring-[#445EF2] focus:ring-offset-2 rounded ${menuAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`}
+                style={{
+                  transitionDelay: menuAnimating ? `${150 + navLinks.length * 60}ms` : '0ms',
+                  transitionProperty: 'opacity, transform, background-color, border-color, color',
+                  transitionDuration: '400ms',
+                  transitionTimingFunction: 'ease-out',
+                }}
                 onClick={closeMenu}
                 aria-label="Demander une consultation gratuite"
               >
