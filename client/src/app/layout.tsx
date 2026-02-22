@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import Footer from "@/components/footer/Footer";
+import { Toaster } from 'react-hot-toast';
 
 import localFont from "next/font/local";
 
@@ -108,6 +109,35 @@ export default function RootLayout({
           </svg>
           <div className="absolute inset-0 rounded-full bg-[#263973] animate-ping opacity-20"></div>
         </Link>
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              background: '#010E26',
+              color: '#fff',
+              borderRadius: '20px',
+              fontFamily: 'var(--font-jost)',
+              padding: '16px 24px',
+              textTransform: 'uppercase',
+              fontSize: '10px',
+              fontWeight: '900',
+              letterSpacing: '0.15em',
+            },
+            success: {
+              iconTheme: {
+                primary: '#445EF2',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            }
+          }}
+        />
       </body>
     </html>
   );

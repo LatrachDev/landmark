@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import haythamImage from '@/assets/JPG/haythamContact.jpg';
+import { api } from '@/services/api';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -47,26 +48,7 @@ const Contact = () => {
         setSubmitStatus(null);
 
         try {
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma/';
-            const response = await fetch(`${baseUrl}api/contact`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (response.status === 422 && data.errors) {
-                    setErrors(data.errors);
-                } else {
-                    setSubmitStatus({ success: false, message: data.message || "Erreur lors de l'envoi." });
-                }
-                return;
-            }
+            await api.home.submitContact(formData);
 
             setShowSuccess(true);
             setFormData({
@@ -78,7 +60,11 @@ const Contact = () => {
             });
             setErrors({});
         } catch (error: any) {
-            setSubmitStatus({ success: false, message: error.message });
+            if (error.status === 422 && error.errors) {
+                setErrors(error.errors);
+            } else {
+                setSubmitStatus({ success: false, message: error.message || "Erreur lors de l'envoi." });
+            }
         } finally {
             setIsSubmitting(false);
         }
