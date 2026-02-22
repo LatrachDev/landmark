@@ -1,5 +1,6 @@
-import type { Metadata } from 'next';
 import AboutClient from './AboutClient';
+import { api } from '@/services/api';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'About Us | Landmark',
@@ -7,21 +8,10 @@ export const metadata: Metadata = {
 };
 
 async function getAboutData() {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.Landmark.ma/';
-
     try {
-        const res = await fetch(`${baseUrl}api/about`, {
-            headers: {
-                'Accept': 'application/json'
-            },
-            next: { revalidate: 3600 } // Revalidate every hour
+        const data = await api.home.getAbout({
+            next: { revalidate: 3600 }
         });
-
-        if (!res.ok) {
-            throw new Error('Failed to fetch about data');
-        }
-
-        const data = await res.json();
         return data.teamMembers || [];
     } catch (error) {
         console.error('Error fetching about data:', error);
