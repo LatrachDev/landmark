@@ -21,19 +21,16 @@ export const metadata: Metadata = {
     }
 };
 
+// import ServicesClient from '@/app/services/ServicesClient';
+import { api } from '@/services/api';
+
+// ... metadata
+
 async function getServicesData() {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.Landmark.ma/';
-
     try {
-        const res = await fetch(`${baseUrl}api/services`, {
-            next: { revalidate: 3600 } // Revalidate every hour
+        const data = await api.home.getServices({
+            next: { revalidate: 3600 }
         });
-
-        if (!res.ok) {
-            throw new Error('Failed to fetch services data');
-        }
-
-        const data = await res.json();
         return data.services || [];
     } catch (error) {
         console.error('Error fetching services data:', error);
