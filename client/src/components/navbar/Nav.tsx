@@ -202,7 +202,7 @@ const Nav = memo(() => {
           <div className="flex flex-col justify-center items-center h-full px-8">
             <h2 id="mobile-menu-title" className="sr-only">Menu de navigation</h2>
 
-            <div className="flex flex-col mt-30 space-y-8 text-center">
+            <div className="flex flex-col space-y-8 text-center">
               {navLinks.map((link, index) => (
                 <Link
                   key={link.path}
