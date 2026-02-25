@@ -110,7 +110,7 @@ const Nav = memo(() => {
   return (
     <>
       <nav
-        className={`w-full sticky top-0 z-50 ${!isHome
+        className={`w-full sticky top-0 font-jost z-50 ${!isHome
             ? 'bg-white'
             : scrolled
               ? 'bg-white shadow-sm'
@@ -193,7 +193,7 @@ const Nav = memo(() => {
       {menuVisible && (
         <div
           id="mobile-menu"
-          className={`xl:hidden fixed inset-0 z-40 bg-white transform transition-transform duration-500 ease-in-out ${menuAnimating ? 'translate-y-0' : '-translate-y-full'
+          className={`xl:hidden fixed inset-0 z-40 pt-20 font-jost bg-white transform transition-transform duration-500 ease-in-out ${menuAnimating ? 'translate-y-0' : '-translate-y-full'
             }`}
           role="dialog"
           aria-modal="true"

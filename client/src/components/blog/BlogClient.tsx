@@ -44,7 +44,7 @@ const BlogClient = ({ blogs, hideHeader = false }: BlogClientProps) => {
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                         <div className="space-y-4">
                             <span className="text-[#445EF2] font-bold tracking-[0.3em] font-jost uppercase text-xs">Notre Actualité</span>
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#010E26] uppercase leading-none font-bodoni">
+                            <h2 className="text-xl sm:text-2xl font-bold text-[#263973] uppercase text-left" style={{ fontFamily: 'bodoni' }}>
                                 Derniers Articles
                             </h2>
                         </div>
@@ -64,8 +64,8 @@ const BlogClient = ({ blogs, hideHeader = false }: BlogClientProps) => {
 
                 <div className="relative">
                     {/* Fading gradients */}
-                    <div className="absolute top-0 bottom-0 left-[-2px] w-12 sm:w-24 md:w-48 z-10 bg-gradient-to-r from-white to-transparent pointer-events-none" />
-                    <div className="absolute top-0 bottom-0 right-[-2px] w-12 sm:w-24 md:w-48 z-10 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+                    {/* <div className="absolute top-0 bottom-0 left-[-2px] w-12 sm:w-24 md:w-48 z-10 bg-gradient-to-r from-white to-transparent pointer-events-none" /> */}
+                    {/* <div className="absolute top-0 bottom-0 right-[-2px] w-12 sm:w-24 md:w-48 z-10 bg-gradient-to-l from-white to-transparent pointer-events-none" />  */}
 
                     <Swiper
                         modules={[Navigation]}

@@ -29,7 +29,7 @@ const Hero = () => {
                     </h1>
                 </div>
 
-                <p className="text-[#f2f2f2] font-light mb-6 sm:mb-8 lg:mb-10 text-xs sm:text-sm md:text-base lg:text-xl tracking-normal uppercase">
+                <p className="text-[#f2f2f2] font-jost font-light mb-6 sm:mb-8 lg:mb-10 text-xs sm:text-sm md:text-base lg:text-xl tracking-normal uppercase">
                     Attirez plus de clients, boostez vos ventes et fidélisez vos clients.
                 </p>
 
@@ -84,7 +84,7 @@ const Hero = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-8">
+                <div className="flex flex-col font-jost sm:flex-row gap-3 sm:gap-4 lg:gap-8">
                     <Link
                         href="/contact"
                         className="bg-[#445EF2] text-white px-3 py-2 sm:px-4 sm:py-2 md:px-10 lg:py-3 transition-all duration-300 hover:bg-white hover:text-black hover:scale-105 text-sm text-center whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#445EF2] rounded"

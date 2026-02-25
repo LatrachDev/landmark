@@ -49,7 +49,7 @@ const Promotion = () => {
   }, []);
 
   return (
-    <div className="bg-[#445EF2] sticky py-4 px-4 z-50 sm:px-20 text-white w-full flex flex-col sm:flex-row items-center">
+    <div className="bg-[#445EF2] font-[Jost] sticky py-4 px-4 z-50 sm:px-20 text-white w-full flex flex-col sm:flex-row items-center">
       <div className="flex-1 flex items-start justify-between gap-1 sm:gap-2 text-xs sm:text-base">
         <div className="w-8/12">
           <span className="text-left mr-2 sm:w-full text-xs sm:text-sm font-bold uppercase">
@@ -60,7 +60,7 @@ const Promotion = () => {
           </span>
         </div>
         {/* Updated Link */}
-        <Link href={'/offres-contenu'} className="bg-gray-100 text-center font-bold hover:bg-gray-200 hover:scale-105 duration-300 text-black px-3 sm:px-4 py-1 cursor-pointer text-xs sm:text-sm transition-colors">
+        <Link href={'/offre'} className="bg-gray-100 text-center font-bold hover:bg-gray-200 hover:scale-105 duration-300 text-black px-3 sm:px-4 py-1 cursor-pointer text-xs sm:text-sm transition-colors">
           Économisez Maintenant
         </Link>
       </div>

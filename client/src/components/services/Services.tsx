@@ -96,7 +96,7 @@ const Services = memo(() => {
     return (
         <section
             id="services-section"
-            className="py-16 px-4 sm:px-10 text-center w-[90%] m-auto"
+            className="py-16  text-center w-full m-auto"
         >
             <h2
                 className="text-xl sm:text-2xl font-bold text-left text-[#263973] uppercase mb-6"
