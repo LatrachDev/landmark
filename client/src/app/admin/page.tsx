@@ -106,12 +106,48 @@ export default function Dashboard() {
         },
     ];
 
-    if (!isLoaded) return null;
+    if (!isLoaded) {
+        return (
+            <div className="font-[Jost] bg-[#fcfdfe] min-h-screen pb-20 overflow-x-hidden">
+                {/* Fixed Navigation Bar Skeleton */}
+                <nav className="bg-white border-b border-gray-100 fixed top-0 left-0 right-0 z-50">
+                    <div className="max-w-7xl mx-auto px-6 lg:px-10 h-24 flex justify-between items-center">
+                        <div className="h-10 w-32 bg-gray-200 rounded-lg animate-pulse" />
+                        <div className="h-10 w-32 bg-gray-200 rounded-2xl animate-pulse" />
+                    </div>
+                </nav>
+
+                {/* Hero Section Skeleton */}
+                <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 md:py-24 mt-24">
+                    <div className="mb-16">
+                        <div className="h-4 w-40 bg-gray-200 rounded animate-pulse mb-4" />
+                        <div className="h-16 w-96 bg-gray-200 rounded-lg animate-pulse mb-6" />
+                        <div className="h-6 w-full max-w-2xl bg-gray-200 rounded animate-pulse" />
+                    </div>
+
+                    {/* Grid Cards Skeleton */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[...Array(6)].map((_, index) => (
+                            <div
+                                key={index}
+                                className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.02)] h-64"
+                            >
+                                <div className="w-16 h-16 bg-gray-200 rounded-2xl animate-pulse mb-8" />
+                                <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse mb-3" />
+                                <div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2" />
+                                <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="font-jost bg-[#fcfdfe] min-h-screen pb-20 overflow-x-hidden">
-            {/* Navigtaion Bar */}
-            <nav className="bg-white border-b border-gray-100 sticky top-0 z-30">
+            {/* Navigation Bar - Fixed */}
+            <nav className="bg-white border-b border-gray-100 fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-white/95">
                 <div className="max-w-7xl mx-auto px-6 lg:px-10 h-24 flex justify-between items-center">
                     <Link href="/admin">
                         <Image
@@ -135,7 +171,7 @@ export default function Dashboard() {
             </nav>
 
             {/* Hero Section */}
-            <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 md:py-24">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 md:py-24 mt-24">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -158,10 +194,11 @@ export default function Dashboard() {
                             key={index}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: index * 0.1 }}
-                            whileHover={{ y: -8, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.08)' }}
+                            transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                            whileHover={{ y: -8, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={() => router.push(card.path)}
-                            className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.02)] transition-all cursor-pointer group flex flex-col h-full"
+                            className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.08)] transition-all cursor-pointer group flex flex-col h-full"
                         >
                             <div className={`w-16 h-16 ${card.color} rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500`}>
                                 {card.icon}
