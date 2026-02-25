@@ -1,13 +1,8 @@
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
 import Footer from '@/components/footer/Footer';
 
 export default function Loading() {
     return (
         <div className="font-['Jost'] bg-[#f9fafb] min-h-screen">
-            <Promotion />
-            <Nav />
-
             <main className="mx-auto w-[90%] px-4 sm:px-6 mt-10">
                 {/* Breadcrumb Skeleton */}
                 <div className="mb-5">

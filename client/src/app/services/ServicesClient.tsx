@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
 import Reviews from '@/components/reviews/Reviews';
 import Contact from '@/components/contact/Contact';
 import Footer from '@/components/footer/Footer';
@@ -72,16 +70,12 @@ export default function ServicesClient({ initialServices }: ServicesClientProps)
             <div
                 className="absolute top-0 left-0 w-full bg-cover bg-no-repeat z-0"
                 style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 90%, rgba(255,255,255,1) 100%), url(${WebSiteBG.src})`,
+                    backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,1) 95%), url(${WebSiteBG.src})`,
                     backgroundPosition: 'left 0px top -100px',
                     height: '40%'
                 }}
             ></div>
 
-            <Promotion />
-            <Nav />
-
-            {/* Services Content */}
             <section className="text-left py-16 px-4 sm:px-10 w-[90%] m-auto relative z-10">
                 <h1 className="sm:mt-24 mt-5 text-[#010e26] text-xl sm:text-2xl md:text-4xl font-bold uppercase tracking-wide mb-4 md:mb-6">
                     DES SOLUTIONS COMPLÈTES POUR BOOSTER VOTRE MARQUE ET VOTRE VISIBILITÉ
@@ -91,13 +85,13 @@ export default function ServicesClient({ initialServices }: ServicesClientProps)
                 </p>
 
                 <div className="mb-20">
-                    <h2 className="text-sm sm:text-base font-bold text-left text-[#263973] uppercase mb-4 tracking-[0.2em]" style={{ fontFamily: 'bodoni' }}>
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-left text-[#263973] uppercase mb-8 tracking-[0.2em]" style={{ fontFamily: 'bodoni' }}>
                         SERVICES
                     </h2>
 
                     {['A', 'B', 'C'].map((category, idx) => (
                         <div key={idx} className="mb-28">
-                            <h3 className="font-bold text-[#01143a] uppercase text-left text-3xl sm:text-4xl md:text-5xl lg:text-[56px] mb-12 tracking-tight leading-[1.1]">
+                            <h3 className="font-bold text-[#01143a] uppercase text-left text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-12 tracking-tight leading-[1.1]">
                                 {categoryTitles[category]}
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
@@ -133,7 +127,7 @@ export default function ServicesClient({ initialServices }: ServicesClientProps)
 
             <Reviews />
             <Contact />
-            <Footer />
+         
         </section>
     );
 }

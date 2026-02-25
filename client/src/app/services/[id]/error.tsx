@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
 import Footer from '@/components/footer/Footer';
 import Link from 'next/link';
 
@@ -19,9 +17,6 @@ export default function Error({
 
     return (
         <div className="font-['Jost'] bg-[#f9fafb] min-h-screen">
-            <Promotion />
-            <Nav />
-
             <main className="mx-auto w-[90%] px-4 sm:px-6 mt-10">
                 <div className="flex flex-col items-center justify-center py-20">
                     <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">

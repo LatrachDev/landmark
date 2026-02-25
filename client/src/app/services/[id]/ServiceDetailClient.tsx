@@ -1,8 +1,6 @@
 'use client';
 
-import React from 'react';
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
+import React, { useEffect } from 'react';
 import Footer from '@/components/footer/Footer';
 import Image from 'next/image';
 
@@ -19,6 +17,10 @@ interface ServiceDetailClientProps {
 }
 
 export default function ServiceDetailClient({ service }: ServiceDetailClientProps) {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const formatDescription = (text: string) => {
         if (!text) return null;
         const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -46,9 +48,6 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
 
     return (
         <div className="font-['Jost'] bg-[#f9fafb] text-[#1f2937] min-h-screen flex flex-col">
-            <Promotion />
-            <Nav />
-
             <main className="mx-auto w-[90%] px-4 sm:px-6 mt-10 flex-grow">
                 <div className="text-sm mb-5 text-gray-500">
                     <time dateTime={service.created_at}>
