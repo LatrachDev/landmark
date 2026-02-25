@@ -2,8 +2,6 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
 import Link from 'next/link';
 import { BlogDetailsSkeleton } from '@/components/blog/BlogSkeleton';
 import { motion } from 'framer-motion';
@@ -71,8 +69,6 @@ export default function BlogDetailPageClient({ children }: { children?: React.Re
 
     if (isLoading) return (
         <div className="font-jost bg-white">
-            <Promotion />
-            <Nav />
             <BlogDetailsSkeleton />
         </div>
     );
@@ -92,9 +88,6 @@ export default function BlogDetailPageClient({ children }: { children?: React.Re
     return (
         <>
             <div className="font-jost bg-white text-[#1f2937] w-full overflow-x-hidden relative">
-                <Promotion />
-                <Nav />
-
                 <main className="mx-auto w-[90%] max-w-5xl px-4 sm:px-6 mt-10 md:mt-16">
 
                     <motion.div

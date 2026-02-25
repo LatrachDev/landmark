@@ -1,16 +1,11 @@
 'use client';
 
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import WebSiteBG from '@/assets/BG/maskBg.png';
-import logoSrc from '@/assets/logotype/white.png';
 
 import { BlogSkeleton } from '@/components/blog/BlogSkeleton';
 import BlogCard from '@/components/blog/BlogCard';
@@ -72,33 +67,27 @@ export default function BlogPageClient() {
 
     return (
         <div className="font-jost relative min-h-screen w-full overflow-x-hidden bg-white">
-            {/* Background with smoother, longer gradient overlay */}
+            {/* Background */}
             <div
-                className="absolute top-0 left-0 w-full bg-cover bg-no-repeat opacity-40 pointer-events-none"
+                className="absolute top-0 left-0 w-full bg-cover bg-no-repeat"
                 style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 40%, rgba(255,255,255,1) 100%), url(${WebSiteBG.src})`,
-                    backgroundPosition: 'left 0px top -50px',
-                    height: '100%'
+                    backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,1) 95%), url(${WebSiteBG.src})`,
+                    backgroundPosition: 'left 0px top -100px',
+                    height: '40%'
                 }}
             ></div>
 
-            <Promotion />
-            <Nav />
-            <section className='w-full flex flex-col justify-center px-4 sm:px-10 relative'>
+            <section className="text-left py-16 px-4 sm:px-10 w-[90%] m-auto relative z-10">
+                <h1 className="sm:mt-24 mt-5 text-[#010e26] text-xl sm:text-2xl md:text-4xl font-bold uppercase tracking-wide mb-4 md:mb-6">
+                    Besoin d'inspiration ?
+                </h1>
+                <p className="text-[#010e26] uppercase mb-10 md:mb-20 text-sm md:text-xl tracking-normal">
+                    Découvrez tous nos contenus en un seul endroit.
+                </p>
 
-                <div className="relative z-10 mt-12 md:mt-24">
-                    <div className="mx-auto w-[90%]">
-                        <h1 className="text-[#010e26] text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-none">
-                            Besoin d'inspiration ?
-                        </h1>
-                        <p className="text-[#010e26] uppercase mb-8 md:mb-12 text-base sm:text-lg md:text-xl font-medium tracking-tight opacity-80">
-                            Découvrez tous nos contenus en un seul endroit.
-                        </p>
-                    </div>
-
-                    {/* Blog Sections */}
-                    <section className=" pb-8 md:pb-16 ">
-                        <div className="container w-[90%] mx-auto space-y-16 md:space-y-24">
+                {/* Blog Sections */}
+                <div className="pb-8 md:pb-16">
+                    <div className="space-y-16 md:space-y-24">
 
                             <div>
                                 <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#263973] uppercase text-left mb-8 tracking-widest relative inline-block font-bodoni">
@@ -144,10 +133,8 @@ export default function BlogPageClient() {
                                     <p className="text-gray-500 font-medium">Aucun article disponible pour le moment.</p>
                                 </div>
                             )}
-                        </div>
-                    </section>
+                    </div>
                 </div>
-
             </section>
         </div>
     );

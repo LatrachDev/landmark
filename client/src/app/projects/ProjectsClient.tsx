@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
 import Contact from '@/components/contact/Contact';
 import Footer from '@/components/footer/Footer';
 import Services from '@/components/services/Services';
@@ -144,28 +142,22 @@ export default function ProjectsClient({ initialProjects, initialContents }: Pro
                     <div
                         className="absolute top-0 left-0 w-full bg-cover bg-no-repeat"
                         style={{
-                            backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 90%, rgba(255,255,255,1) 100%), url(${WebSiteBG.src})`,
+                            backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,1) 95%), url(${WebSiteBG.src})`,
                             backgroundPosition: 'left 0px top -100px',
                             height: '40%'
                         }}
                     ></div>
 
-                    <Promotion />
-                    <Nav />
-
-                    <div className="relative z-10">
-                        {/* Brand Design Header */}
-                        <section className="mx-auto px-4 sm:px-10 mt-20 md:mt-40 w-[90%] m-auto">
-                            <h1 className="text-[#010e26] text-xl sm:text-2xl md:text-4xl font-bold uppercase tracking-wide mb-4 md:mb-6">
-                                Découvrez ce qu'on a réalisé pour eux… et ce qu'on peut faire pour vous
-                            </h1>
-                            <p className="text-[#010e26] uppercase mb-10 md:mb-20 text-sm md:text-xl tracking-normal">
-                                Faites comme eux, choisissez l’excellence et rejoignez une communauté qui nous fait confiance pour transformer leurs ambitions en réussites.
-                            </p>
-                        </section>
+                    <section className="text-left py-16 px-4 sm:px-10 w-[90%] m-auto relative z-10">
+                        <h1 className="sm:mt-24 mt-5 text-[#010e26] text-xl sm:text-2xl md:text-4xl font-bold uppercase tracking-wide mb-4 md:mb-6">
+                            Découvrez ce qu'on a réalisé pour eux… et ce qu'on peut faire pour vous
+                        </h1>
+                        <p className="text-[#010e26] uppercase mb-10 md:mb-20 text-sm md:text-xl tracking-normal">
+                            Faites comme eux, choisissez l'excellence et rejoignez une communauté qui nous fait confiance pour transformer leurs ambitions en réussites.
+                        </p>
 
                         {/* Projects Section */}
-                        <section className="mx-auto px-4 sm:px-10 py-16">
+                        <div className="py-16">
                             <div className="container w-[90%] m-auto">
                                 <div className="text-xl sm:text-2xl font-bold text-left text-[#263973] uppercase mb-6" style={{ fontFamily: 'bodoni' }}>
                                     <h2>BRAND design</h2>
@@ -200,12 +192,12 @@ export default function ProjectsClient({ initialProjects, initialContents }: Pro
                                     ))}
                                 </div>
                             </div>
-                        </section>
+                        </div>
 
                         <Services />
 
                         {/* Content Section */}
-                        <section className="px-4 sm:px-10 py-16 bg-white">
+                        <div className="py-16 bg-white">
                             <div className="container w-[90%] mx-auto">
                                 <div className="mb-12">
                                     <h2
@@ -229,11 +221,11 @@ export default function ProjectsClient({ initialProjects, initialContents }: Pro
                                     ))}
                                 </div>
                             </div>
-                        </section>
+                        </div>
 
+         
+                    </section>
                         <Contact />
-                        <Footer />
-                    </div>
                 </>
             )}
 

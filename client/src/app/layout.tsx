@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import Footer from "@/components/footer/Footer";
+import ConditionalFooter from '@/components/footer/ConditionalFooter';
 import { Toaster } from 'react-hot-toast';
+import LayoutWrapper from '@/components/LayoutWrapper';
+import NavigationProgress from '@/components/NavigationProgress';
+import SmoothMouseFollower from '@/components/SmoothMouseFollower';
 
 import localFont from "next/font/local";
 
@@ -69,9 +72,107 @@ const jost = localFont({
   variable: "--font-jost",
 });
 
+const jenine = localFont({
+  src: "../assets/fonts/alfont_com_Jenine-Bold.otf",
+  variable: "--font-jenine",
+  weight: "700",
+});
+
+const madaniRegular = localFont({
+  src: "../assets/fonts/alfont_com_Madani-Arabic-Regular.ttf",
+  variable: "--font-madani-regular",
+  weight: "400",
+});
+
+const madaniBold = localFont({
+  src: "../assets/fonts/alfont_com_Madani-Arabic-Bold.ttf",
+  variable: "--font-madani-bold",
+  weight: "700",
+});
+
 export const metadata: Metadata = {
-  title: "Landmark Agency - Digital Marketing",
-  description: "Agence Marketing Digital & Design Brand",
+  metadataBase: new URL('https://landmark.ma'),
+  title: {
+    default: "Landmark - Agence Marketing Digital au Maroc | Branding & Stratégie Créative",
+    template: "%s | Landmark Agency"
+  },
+  description: "Renforcez votre présence en ligne, créez une identité de marque forte et captivez votre audience avec Landmark - agence de marketing digital au Maroc spécialisée en branding, création de contenu et développement web.",
+  keywords: [
+    "agence marketing digital maroc",
+    "branding maroc",
+    "création contenu maroc",
+    "développement web oujda",
+    "marketing digital casablanca",
+    "agence créative tanger",
+    "stratégie digitale maroc",
+    "Landmark agency",
+    "Haytham Guemmah",
+    "photographie commerciale maroc",
+    "montage vidéo maroc",
+    "impression maroc",
+    "design graphique maroc",
+    "agence web maroc"
+  ],
+  authors: [{ name: "Landmark Agency - Haytham Guemmah" }],
+  creator: "Landmark Agency",
+  publisher: "Landmark Marketing Agency",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_MA',
+    url: 'https://landmark.ma',
+    siteName: 'Landmark Agency',
+    title: 'Landmark - Agence Marketing Digital au Maroc | Branding & Stratégie Créative',
+    description: 'Renforcez votre présence en ligne, créez une identité de marque forte et captivez votre audience avec Landmark - top agence de marketing digital au Maroc',
+    images: [
+      {
+        url: '/assets/Logotype/White.png',
+        width: 1200,
+        height: 630,
+        alt: 'Landmark Agency Logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@LandmarkAgency',
+    creator: '@LandmarkAgency',
+    title: 'Landmark - Agence Marketing Digital au Maroc',
+    description: 'Agence créative spécialisée en branding, marketing digital et stratégie de contenu au Maroc.',
+    images: ['/assets/Logotype/White.png'],
+  },
+  alternates: {
+    canonical: 'https://landmark.ma',
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/favicon.png',
+  },
+  manifest: '/site.webmanifest',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#010e26' },
+    { media: '(prefers-color-scheme: dark)', color: '#010e26' },
+  ],
+  other: {
+    'geo.region': 'MA',
+    'geo.position': '34.6814;-1.9086',
+    'geo.placename': 'Oujda, Morocco',
+    'language': 'French',
+    'company': 'Landmark Marketing Agency',
+  },
 };
 
 export default function RootLayout({
@@ -79,13 +180,82 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Landmark Agency",
+    "alternateName": "Landmark Marketing Agency",
+    "url": "https://landmark.ma",
+    "logo": "https://landmark.ma/assets/Logotype/White.png",
+    "description": "Agence marketing digital au Maroc spécialisée en branding, création de contenu, développement web et stratégie digitale.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Oujda",
+      "addressRegion": "Oriental",
+      "postalCode": "60000",
+      "addressCountry": "MA"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+212-710-220010",
+      "contactType": "customer service",
+      "availableLanguage": ["French", "Arabic", "English"]
+    },
+    "sameAs": [
+      "https://www.facebook.com/Landmarkagency",
+      "https://www.instagram.com/Landmarkagency",
+      "https://www.linkedin.com/company/Landmarkagency"
+    ],
+    "founder": {
+      "@type": "Person",
+      "name": "Haytham Guemmah"
+    },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Oujda"
+      },
+      {
+        "@type": "City",
+        "name": "Casablanca"
+      },
+      {
+        "@type": "City",
+        "name": "Tanger"
+      },
+      {
+        "@type": "Country",
+        "name": "Morocco"
+      }
+    ],
+    "serviceType": [
+      "Digital Marketing",
+      "Branding",
+      "Web Development",
+      "Content Creation",
+      "Photography",
+      "Video Production",
+      "Graphic Design"
+    ]
+  };
+
   return (
-    <html lang="en">
+    <html lang="fr">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${bodoni.variable} ${dmSans.variable} ${jost.variable} antialiased overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bodoni.variable} ${dmSans.variable} ${jost.variable} ${jenine.variable} ${madaniRegular.variable} ${madaniBold.variable} antialiased overflow-x-hidden`}
       >
-        {children}
-        <Footer />
+        <SmoothMouseFollower />
+        <NavigationProgress />
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
+        <ConditionalFooter />
 
         {/* Fixed Contact Button - Mobile Only */}
         <Link

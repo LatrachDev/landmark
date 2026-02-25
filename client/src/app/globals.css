@@ -6,6 +6,15 @@
   --font-jost: var(--font-jost);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 /* Custom Swiper Styles */
 .swiper-button-next,
 .swiper-button-prev {

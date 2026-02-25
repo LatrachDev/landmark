@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Promotion from '@/components/Promotion';
-import Nav from '@/components/navbar/Nav';
 import Mission from '@/components/home/Mission';
 import Footer from '@/components/footer/Footer';
 import WebSiteBG from '@/assets/BG/maskBg.png';
@@ -32,29 +30,20 @@ export default function AboutClient({ initialTeamMembers }: AboutClientProps) {
             <div
                 className="absolute top-0 left-0 w-full bg-cover bg-no-repeat"
                 style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 60%, rgba(255,255,255,1) 100%), url(${WebSiteBG.src})`,
-                    backgroundPosition: 'left -130px top -110px',
-                    height: '50%'
+                    backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,1) 95%), url(${WebSiteBG.src})`,
+                    backgroundPosition: 'left 0px top -100px',
+                    height: '40%'
                 }}
             ></div>
 
-            <section className="relative z-10">
-                {/* Banner Promotion */}
-                <Promotion />
+            <section className="text-left py-16 px-4 sm:px-10 w-[90%] m-auto relative z-10">
+                <h1 className="sm:mt-24 mt-5 text-[#010e26] text-xl sm:text-2xl md:text-4xl font-bold uppercase tracking-wide mb-4 md:mb-6">
+                    Landmark est plus qu'une agence de marketing digital, c'est un espace où la créativité et la performance se rejoignent pour donner vie à des marques fortes.
+                </h1>
 
-                {/* Navbar */}
-                <Nav />
+                <Mission className="text-[#263973] py-16 font-medium" />
 
-                {/* Main Content */}
-                <main className="mx-auto px-4 sm:px-10 mt-20 md:mt-40 w-[90%] m-auto">
-                    <h1 className="text-[#010e26] text-xl sm:text-2xl md:text-4xl font-bold uppercase tracking-wide mb-4 md:mb-6">
-                        Landmark est plus qu'une agence de marketing digital, c'est un espace où la créativité et la performance se rejoignent pour donner vie à des marques fortes.
-                    </h1>
-                </main>
-
-                <Mission className="text-[#263973] mx-auto py-16 px-4 sm:px-10 w-[90%] m-auto font-medium" />
-
-                <section className="mx-auto py-16 px-4 sm:px-10 w-[90%] m-auto">
+                <div className="py-16">
                     <h2 className="text-xl sm:text-2xl font-bold tracking-[0.2em] mb-6 uppercase pl-0 text-[#263973]" style={{ fontFamily: 'bodoni' }}>
                         À propos de Landmark
                     </h2>
@@ -170,9 +159,8 @@ export default function AboutClient({ initialTeamMembers }: AboutClientProps) {
                             </article>
                         ))}
                     </section>
-                </section>
+                </div>
 
-                <Footer />
             </section>
         </div>
     );

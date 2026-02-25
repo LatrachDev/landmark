@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'; 
-import Nav from '@/components/navbar/Nav';
+import emailjs from '@emailjs/browser';
 import Footer from '@/components/footer/Footer';
 import Reviews from '@/components/reviews/Reviews';
 
@@ -61,22 +61,29 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus(null);
     
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}api/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
+      if (!serviceId) throw new Error('EmailJS Service ID non défini');
+      if (!templateId) throw new Error('EmailJS Template ID non défini');
+      if (!publicKey) throw new Error('EmailJS Public Key non défini');
 
-      const data = await response.json();
+      const templateParams = {
+        to_email: 'contact.landmarkagency@gmail.com',
+        from_name: formData.full_name,
+        full_name: formData.full_name,
+        phone_number: formData.phone_number,
+        company_name: formData.company_name,
+        message: formData.message,
+        interests: formData.interests.join(', '),
+        reply_to: formData.phone_number,
+      };
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur lors de l\'envoi');
-      }
+      await emailjs.send(serviceId, templateId, templateParams, publicKey);
 
       setShowSuccess(true);
       
@@ -89,7 +96,7 @@ export default function ContactPage() {
       });
       
     } catch (error) {
-
+      console.error('EmailJS Error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Une erreur inconnue est survenue';
       setSubmitStatus({ success: false, message: errorMessage });
     } finally {
@@ -109,7 +116,6 @@ export default function ContactPage() {
         structuredData={contactStructuredData}
       /> */}
 
-      <Nav />
       <section className="px-4 sm:px-10 py-8 bg-[#010E26] text-[#f2f2f2]">
         <div className="container w-[90%] m-auto">
           <div className="mb-12">
@@ -218,27 +224,22 @@ export default function ContactPage() {
               ) : (
                 <div className="lg:w-7/12 animate-fade-in">
                   <div className="text-center py-12">
-                    <div className="mx-auto mb-6 w-20 h-20 bg-green-500 rounded-full flex items-center justify-center animate-bounce-in relative">
-                      <div className="relative">
-                        <svg className="w-12 h-12 text-white animate-check-draw" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <svg className="absolute inset-0 w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 12l2 2 4-4" className="animate-check-path" />
-                        </svg>
-                      </div>
+                    <div className="mx-auto mb-6 w-20 h-20 bg-green-500 rounded-full flex items-center justify-center animate-bounce-in">
+                      <svg className="w-12 h-12 text-white animate-check-draw" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </div>
                     
-                    <h3 className="text-3xl font-bold text-[#010E26] uppercase mb-4 animate-slide-up">
+                    <h3 className="text-3xl font-bold text-[#f2f2f2] uppercase mb-4 animate-slide-up">
                       Message Envoyé!
                     </h3>
-                    <p className="text-lg text-[#666666] mb-8 animate-slide-up-delay">
+                    <p className="text-lg text-[#f2f2f2] mb-8 animate-slide-up-delay">
                       Merci pour votre message. Notre équipe vous contactera dans les plus brefs délais.
                     </p>
                     
                     <button
-                      onClick={() => router.push('/')} // Changed to Next.js router
-                      className="bg-[#445EF2] text-white px-8 py-3 uppercase font-medium hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 animate-slide-up-delay-2"
+                      onClick={() => router.push('/')}
+                      className="bg-[#445EF2] text-white px-8 py-3 uppercase font-medium hover:bg-[#263973] transition-all duration-300 transform hover:scale-105 animate-slide-up-delay-2 shadow-lg"
                     >
                       Retour à l'accueil
                     </button>
@@ -309,7 +310,7 @@ export default function ContactPage() {
       </section>
 
       <Reviews />
-      <Footer />
+
 
       <style jsx>{`
         /* Next.js supports styled-jsx out of the box! */
