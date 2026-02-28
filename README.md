@@ -1,6 +1,6 @@
 # 📈 Landmark – Marketing Agency Website
-<p align="center">
-    <img style="width: 200px;" src="./client/src/assets/logotype/white.png" alt="Landmark Agency Logo"/>
+<p>
+    <img style="width: 200px; margin-top: 20px; margin-bottom: 20px;" src="./client/src/assets/logotype/white.png" alt="Landmark Agency Logo"/>
 </p>
 
 Landmark is a modern, responsive website built for a marketing agency. This project showcases services, client success stories, project portfolios, blog content, and more — all designed with a sleek, professional look and optimized for user experience.
