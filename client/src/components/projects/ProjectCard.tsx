@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 interface ProjectCardProps {
     project: {
         id: string | number;
@@ -12,18 +14,35 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, onProjectClick }: ProjectCardProps) {
+    const [imageLoaded, setImageLoaded] = useState(false);
+
     return (
         <div className="flex flex-col mb-10 group">
             <div
                 className="mb-4 rounded-lg overflow-hidden aspect-square bg-gray-100 relative cursor-pointer"
                 onClick={() => onProjectClick(project)}
+                onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onProjectClick(project);
+                    }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Voir les détails du projet ${project.title}`}
             >
+                {!imageLoaded && (
+                    <div className="absolute inset-0 bg-gray-200 animate-pulse">
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
+                    </div>
+                )}
                 <img
-                    src={`https://api.Landmark.ma/public/storage/${project.image}`}
+                    src={`https://api.landmark.ma/public/storage/${project.image}`}
                     alt={project.title}
-                    className="w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105"
+                    className={`w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    onLoad={() => setImageLoaded(true)}
                 />
-                <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-50 hover:bg-black/50 flex items-center justify-center transition-all duration-300">
+                <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-50 hover:bg-black/50 flex items-center justify-center transition-all duration-300 z-10">
                     <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-bold text-lg">
                         Voir les détails
                     </span>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ProjectCard from './ProjectCard';
 import VideoCard from '@/components/content/VideoCard';
 
@@ -29,48 +29,55 @@ interface ProjectsInteractiveProps {
 export default function ProjectsInteractive({ projects, contents }: ProjectsInteractiveProps) {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
-    const [viewportHeight, setViewportHeight] = useState(0);
+    const [modalImageLoaded, setModalImageLoaded] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const activeVideoRef = useRef<HTMLVideoElement | null>(null);
 
+    // Prevent background scroll and hide navbar when modal is open
     useEffect(() => {
-        setViewportHeight(window.innerHeight);
-
-        const handleResize = () => setViewportHeight(window.innerHeight);
-        const handleVisualViewportChange = () => {
-            if (window.visualViewport) setViewportHeight(window.visualViewport.height);
-        };
-
-        window.addEventListener('resize', handleResize);
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', handleVisualViewportChange);
+        if (selectedProject) {
+            document.body.style.overflow = 'hidden';
+            document.body.setAttribute('data-modal-open', 'true');
+        } else {
+            document.body.style.overflow = 'auto';
+            document.body.removeAttribute('data-modal-open');
         }
 
         return () => {
-            window.removeEventListener('resize', handleResize);
-            if (window.visualViewport) {
-                window.visualViewport.removeEventListener('resize', handleVisualViewportChange);
-            }
+            document.body.style.overflow = 'auto';
+            document.body.removeAttribute('data-modal-open');
         };
-    }, []);
+    }, [selectedProject]);
 
-    const openProjectModal = (project: Project) => {
+    const openProjectModal = useCallback((project: Project) => {
         setSelectedProject(project);
         setIsExpanded(false);
-        document.body.style.overflow = 'hidden';
-    };
+        setModalImageLoaded(false);
+    }, []);
 
-    const closeProjectModal = () => {
+    const closeProjectModal = useCallback(() => {
         setSelectedProject(null);
         setIsExpanded(false);
-        document.body.style.overflow = 'auto';
-    };
+        setModalImageLoaded(false);
+    }, []);
 
-    const handleOverlayClick = (e: React.MouseEvent) => {
+    const handleOverlayClick = useCallback((e: React.MouseEvent) => {
         if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
             closeProjectModal();
         }
-    };
+    }, [closeProjectModal]);
+
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && selectedProject) {
+                closeProjectModal();
+            }
+        };
+        if (selectedProject) {
+            document.addEventListener('keydown', handleEscape);
+            return () => document.removeEventListener('keydown', handleEscape);
+        }
+    }, [selectedProject, closeProjectModal]);
 
     const handleVideoPlay = (ref: React.RefObject<HTMLVideoElement | null>) => {
         if (ref.current) {
@@ -81,10 +88,17 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
         }
     };
 
-    const isLongDescription = selectedProject && selectedProject.description.length > 200;
+    const isLongDescription = (selectedProject?.description?.length ?? 0) > 150;
 
     return (
         <>
+            <style jsx>{`
+                @keyframes shimmer {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(100%); }
+                }
+            `}</style>
+
             {/* Projects Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {projects.map((project, index) => (
@@ -108,8 +122,8 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                         {contents.map((content) => (
                             <VideoCard
                                 key={content.id}
-                                videoUrl={`https://api.Landmark.ma/public/storage/${content.video}`}
-                                thumbnailUrl={`https://api.Landmark.ma/public/storage/${content.thumbnail}`}
+                                videoUrl={`https://api.landmark.ma/public/storage/${content.video}`}
+                                thumbnailUrl={`https://api.landmark.ma/public/storage/${content.thumbnail}`}
                                 title={content.title}
                                 views={content.views}
                                 onVideoPlay={handleVideoPlay}
@@ -122,47 +136,70 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
             {/* Modal */}
             {selectedProject && (
                 <div
-                    className="fixed inset-0 backdrop-blur-sm bg-black/60 flex items-center justify-center z-50 px-4"
+                    className="fixed inset-0 backdrop-blur-sm bg-black/60 flex items-center justify-center z-50 overflow-y-auto"
                     onClick={handleOverlayClick}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="project-modal-title"
                     style={{
-                        height: viewportHeight > 0 ? `${viewportHeight}px` : '100vh',
+                        paddingTop: 'max(env(safe-area-inset-top), 1rem)',
+                        paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)',
                     }}
                 >
                     <div
                         ref={modalRef}
-                        className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden"
-                        style={{
-                            maxHeight: viewportHeight > 0 ? `${viewportHeight * 0.9}px` : '90vh',
-                        }}
+                        className="bg-white rounded-lg w-[90%] max-w-6xl relative overflow-hidden flex flex-col max-h-[calc(100vh-2rem)]"
+                        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                     >
-                        <div className="relative w-full h-64 md:h-80">
-                            <img
-                                src={`https://api.Landmark.ma/public/storage/${selectedProject.image}`}
-                                alt={selectedProject.title}
-                                className={`w-full h-full object-cover ${isExpanded && isLongDescription ? 'rounded-t-3xl' : ''}`}
-                            />
-                        </div>
+                        {/* Modal Header */}
+                        <div className="sticky top-0 bg-white px-6 py-2 border-b flex justify-between items-start z-10">
+                            <div className="w-full">
+                                <h2 id="project-modal-title" className="text-2xl font-bold">{selectedProject.title}</h2>
 
-                        <div className="p-6 md:p-8 overflow-y-auto" style={{ maxHeight: '50vh' }}>
-                            <h2 className="text-2xl md:text-3xl font-bold text-[#010E26] mb-4">{selectedProject.title}</h2>
-                            <p className={`text-[#64748b] text-base leading-relaxed mb-6 ${!isExpanded && isLongDescription ? 'line-clamp-3' : ''}`}>
-                                {selectedProject.description}
-                            </p>
-                            {isLongDescription && (
-                                <button
-                                    onClick={() => setIsExpanded(!isExpanded)}
-                                    className="text-[#445EF2] font-semibold hover:underline mb-6"
-                                >
-                                    {isExpanded ? 'Voir moins' : 'Voir plus'}
-                                </button>
-                            )}
+                                <div className="mt-2 text-gray-600">
+                                    <p
+                                        id="project-description"
+                                        className={`transition-all ${!isExpanded && isLongDescription ? 'line-clamp-3 sm:line-clamp-none' : ''}`}
+                                    >
+                                        {selectedProject.description}
+                                    </p>
+                                    {isLongDescription && (
+                                        <button
+                                            onClick={() => setIsExpanded(!isExpanded)}
+                                            className="text-[#445EF2] text-sm mt-1 sm:hidden focus:outline-none focus:ring-2 focus:ring-[#445EF2] focus:ring-offset-2 rounded"
+                                            aria-expanded={isExpanded}
+                                            aria-controls="project-description"
+                                        >
+                                            {isExpanded ? 'Show less' : 'Lire la suite'}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
 
                             <button
                                 onClick={closeProjectModal}
-                                className="w-full bg-[#263973] text-white py-3 rounded-full font-bold hover:bg-[#445EF2] transition-colors duration-300"
+                                className="text-gray-500 cursor-pointer hover:text-gray-700 text-2xl ml-4 focus:outline-none focus:ring-2 focus:ring-[#445EF2] focus:ring-offset-2 rounded"
+                                aria-label="Fermer la fenêtre de détails du projet"
                             >
-                                Fermer
+                                &times;
                             </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="p-6 overflow-y-auto max-h-[calc(100vh-160px)]">
+                            <div className="relative w-full min-h-[200px]">
+                                {!modalImageLoaded && (
+                                    <div className="w-full min-h-[400px] bg-gray-200 rounded-md animate-pulse overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
+                                    </div>
+                                )}
+                                <img
+                                    src={`https://api.landmark.ma/public/storage/${selectedProject.landing}`}
+                                    alt={`Page d'accueil du projet ${selectedProject.title}`}
+                                    className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                                    onLoad={() => setModalImageLoaded(true)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

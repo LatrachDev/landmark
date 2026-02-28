@@ -16,33 +16,68 @@ interface ProjectGridProps {
     projects: Project[];
 }
 
+function ImageWithPlaceholder({
+    src,
+    alt,
+    className = '',
+}: {
+    src: string;
+    alt: string;
+    className?: string;
+}) {
+    const [loaded, setLoaded] = useState(false);
+
+    return (
+        <>
+            {!loaded && (
+                <div className="absolute inset-0 bg-gray-200 animate-pulse overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                className={`${className} transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={() => setLoaded(true)}
+                loading="lazy"
+            />
+        </>
+    );
+}
+
 const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const [modalImageLoaded, setModalImageLoaded] = useState(false);
     const modalRef = useRef<HTMLDivElement | null>(null);
 
     const isLongDescription = (selectedProject?.description?.length ?? 0) > 150;
 
-    // Prevent background scroll when modal is open
+    // Prevent background scroll and hide navbar when modal is open
     useEffect(() => {
         if (selectedProject) {
             document.body.style.overflow = 'hidden';
+            document.body.setAttribute('data-modal-open', 'true');
         } else {
             document.body.style.overflow = 'auto';
+            document.body.removeAttribute('data-modal-open');
         }
 
         return () => {
             document.body.style.overflow = 'auto';
+            document.body.removeAttribute('data-modal-open');
         };
     }, [selectedProject]);
 
     const openProjectModal = useCallback((project: Project) => {
         setSelectedProject(project);
+        setModalImageLoaded(false);
     }, []);
 
     const closeProjectModal = useCallback(() => {
         setSelectedProject(null);
         setIsExpanded(false);
+        setModalImageLoaded(false);
     }, []);
 
     const handleOverlayClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -65,6 +100,12 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
 
     return (
         <section className="mx-auto px-4 sm:px-10 py-16 bg-white">
+            <style jsx>{`
+                @keyframes shimmer {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(100%); }
+                }
+            `}</style>
             <div className="container w-[90%] m-auto">
                 {/* Section Title */}
                 <div className="mb-12 font-bold text-left" style={{ fontFamily: 'bodoni' }}>
@@ -88,11 +129,10 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                 role="button"
                                 aria-label={`Voir les détails du projet ${project.title}`}
                             >
-                                <img
-                                    src={`https://api.Landmark.ma/public/storage/${project.image}`}
+                                <ImageWithPlaceholder
+                                    src={`https://api.landmark.ma/public/storage/${project.image}`}
                                     alt={`Image du projet ${project.title}`}
                                     className="w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105"
-                                    loading="lazy"
                                 />
                                 <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-50 hover:bg-black/50 flex items-center justify-center transition-all duration-300">
                                     <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-bold text-lg">
@@ -180,12 +220,19 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
 
                             {/* Modal Content */}
                             <div className="p-6 overflow-y-auto max-h-[calc(100vh-160px)]">
-                                <img
-                                    src={`https://api.Landmark.ma/public/storage/${selectedProject.landing}`}
-                                    alt={`Page d'accueil du projet ${selectedProject.title}`}
-                                    className="w-full h-auto mb-6 rounded-md"
-                                    loading="lazy"
-                                />
+                                <div className="relative w-full min-h-[200px]">
+                                    {!modalImageLoaded && (
+                                        <div className="w-full min-h-[400px] bg-gray-200 rounded-md animate-pulse overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
+                                        </div>
+                                    )}
+                                    <img
+                                        src={`https://api.landmark.ma/public/storage/${selectedProject.landing}`}
+                                        alt={`Page d'accueil du projet ${selectedProject.title}`}
+                                        className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                                        onLoad={() => setModalImageLoaded(true)}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

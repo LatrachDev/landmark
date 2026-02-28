@@ -48,3 +48,12 @@ html {
     display: none !important;
   }
 }
+
+/* Hide navbar and promotion bar when project modal is open */
+body[data-modal-open="true"] nav {
+  display: none !important;
+}
+
+body[data-modal-open="true"] .sticky.z-50 {
+  display: none !important;
+}

@@ -82,7 +82,6 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
                 </div>
             </main>
 
-            <Footer />
         </div>
     );
 }
