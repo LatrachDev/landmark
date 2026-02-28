@@ -53,7 +53,7 @@ export default function LoginPage() {
                 className="w-full lg:w-1/2 flex items-center justify-center bg-white p-8 lg:p-16"
             >
                 <div className="w-full max-w-md">
-                    <Link href="/" className="flex justify-center mb-12">
+                    <Link href="/" className="flex justify-left mb-12">
                         <Image
                             src={mainLogo}
                             alt="Landmark Logo"
