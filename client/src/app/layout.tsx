@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
@@ -162,10 +162,6 @@ export const metadata: Metadata = {
     apple: '/favicon.png',
   },
   manifest: '/site.webmanifest',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#010e26' },
-    { media: '(prefers-color-scheme: dark)', color: '#010e26' },
-  ],
   other: {
     'geo.region': 'MA',
     'geo.position': '34.6814;-1.9086',
@@ -173,6 +169,13 @@ export const metadata: Metadata = {
     'language': 'French',
     'company': 'Landmark Marketing Agency',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#010e26' },
+    { media: '(prefers-color-scheme: dark)', color: '#010e26' },
+  ],
 };
 
 export default function RootLayout({

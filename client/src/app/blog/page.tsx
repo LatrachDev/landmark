@@ -10,7 +10,9 @@ export const metadata: Metadata = {
         canonical: "/blog",
     },
     openGraph: {
-        url: "https://Landmark.ma/blog",
+        url: "https://landmark.ma/blog",
+        title: "Blog Landmark - Conseils Marketing Digital & Branding Maroc",
+        description: "Apprendre les meilleures stratégies marketing avec Landmark : conseils, astuces et tendances du marketing digital au Maroc.",
     }
 };
 
@@ -53,7 +55,7 @@ async function getBlogData(): Promise<BlogCategory[]> {
                 }
                 acc[category].push({
                     ...blog,
-                    image: `https://api.Landmark.ma/public/storage/${blog.image}`
+                    image: `https://api.landmark.ma/public/storage/${blog.image}`
                 });
                 return acc;
             }, {});
@@ -79,8 +81,31 @@ async function getBlogData(): Promise<BlogCategory[]> {
 export default async function BlogPage() {
     const blogData = await getBlogData();
 
+    const allPosts = blogData.flatMap(cat => cat.posts);
+    const blogListSchema = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Blog Landmark Agency",
+        "description": "Articles et conseils marketing digital par Landmark Agency",
+        "url": "https://landmark.ma/blog",
+        "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": allPosts.length,
+            "itemListElement": allPosts.map((post, index) => ({
+                "@type": "ListItem",
+                "position": index + 1,
+                "url": `https://landmark.ma/blog/${post.id}`,
+                "name": post.title
+            }))
+        }
+    };
+
     return (
         <div className="font-jost relative min-h-screen w-full overflow-x-hidden bg-white">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogListSchema) }}
+            />
             {/* Background */}
             <div
                 className="absolute top-0 left-0 w-full bg-cover bg-no-repeat"

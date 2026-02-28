@@ -1,0 +1,21 @@
+{
+    "name": "Landmark Agency",
+    "short_name": "Landmark",
+    "description": "Agence Marketing Digital au Maroc - Branding & Stratégie Créative",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#010e26",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        }
+    ]
+}

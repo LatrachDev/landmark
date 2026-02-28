@@ -58,11 +58,13 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
                 </div>
 
                 <div className="relative w-full md:h-[500px] h-[300px] rounded-2xl overflow-hidden shadow-2xl mb-12 transition-transform duration-500 hover:scale-[1.005]">
-                    <img
+                    <Image
                         src={service.imageUrl}
                         alt={service.title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 90vw"
+                        className="object-cover"
+                        priority
                     />
                 </div>
 

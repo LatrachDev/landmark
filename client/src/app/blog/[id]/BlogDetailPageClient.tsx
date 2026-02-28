@@ -1,17 +1,19 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BlogDetailsSkeleton } from '@/components/blog/BlogSkeleton';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
-export default function BlogDetailPageClient({ children }: { children?: React.ReactNode }) {
-    const params = useParams();
-    const id = params?.id;
-    const [blog, setBlog] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(true);
+interface BlogData {
+    id: string | number;
+    title: string;
+    description: string;
+    image: string;
+    category: string;
+    created_at: string;
+}
 
+export default function BlogDetailPageClient({ blog, children }: { blog: BlogData; children?: React.ReactNode }) {
     const formatBlogText = (text: string) => {
         if (!text) return null;
         const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -46,45 +48,6 @@ export default function BlogDetailPageClient({ children }: { children?: React.Re
         });
     };
 
-    useEffect(() => {
-        if (!id) return;
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma/';
-        fetch(`${apiBaseUrl}api/blog/${id}`)
-            .then(res => {
-                if (!res.ok) throw new Error('Network response was not ok');
-                return res.json();
-            })
-            .then(data => {
-                setBlog({
-                    ...data,
-                    image: `https://api.Landmark.ma/public/storage/${data.image}`
-                });
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Failed to fetch blog data:', error);
-                setIsLoading(false);
-            });
-    }, [id]);
-
-    if (isLoading) return (
-        <div className="font-jost bg-white">
-            <BlogDetailsSkeleton />
-        </div>
-    );
-
-    if (!blog) return (
-        <div className="text-center py-40 bg-gray-50 min-h-screen">
-            <div className="max-w-md mx-auto p-10 bg-white rounded-3xl shadow-sm border border-gray-100">
-                <h1 className="text-2xl font-bold text-gray-800 mb-4">Article non trouvé</h1>
-                <p className="text-gray-500 mb-8">Désolé, l'article que vous recherchez n'existe plus ou a été déplacé.</p>
-                <Link href="/blog" className="inline-block bg-[#263973] text-white px-8 py-3 rounded-full font-bold hover:bg-[#445EF2] transition-colors">
-                    Retour au blog
-                </Link>
-            </div>
-        </div>
-    );
-
     return (
         <>
             <div className="font-jost bg-white text-[#1f2937] w-full overflow-x-hidden relative">
@@ -108,10 +71,13 @@ export default function BlogDetailPageClient({ children }: { children?: React.Re
                         </h1>
 
                         <div className="relative aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden rounded-2xl md:rounded-3xl shadow-xl mb-8 md:mb-12 group">
-                            <img
+                            <Image
                                 src={blog.image}
                                 alt={blog.title}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                fill
+                                sizes="(max-width: 768px) 100vw, 90vw"
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                priority
                             />
                         </div>
                     </motion.div>

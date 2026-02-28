@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 interface BlogCardProps {
@@ -32,10 +33,12 @@ const BlogCard = ({ post, truncateDescription }: BlogCardProps) => {
                         {post.category}
                     </span>
                 )}
-                <img
+                <Image
                     src={post.image}
                     alt={post.title}
-                    className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-110"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover rounded-xl transition-transform duration-500 group-hover:scale-110"
                 />
             </Link>
 

@@ -21,7 +21,9 @@ export const metadata: Metadata = {
         canonical: '/services',
     },
     openGraph: {
-        url: 'https://Landmark.ma/services',
+        url: 'https://landmark.ma/services',
+        title: 'Services Marketing Digital Maroc | Landmark Agency',
+        description: 'Découvrez nos services marketing digital au Maroc : branding, développement web, création de contenu, photographie, design graphique.',
     }
 };
 
@@ -74,19 +76,41 @@ export default async function ServicesPage() {
             "provider": {
                 "@type": "Organization",
                 "name": "Landmark Agency",
-                "url": "https://Landmark.ma"
+                "url": "https://landmark.ma"
             },
             "areaServed": "Morocco",
-            "url": `https://Landmark.ma/services/${service.id}`
+            "url": `https://landmark.ma/services/${service.id}`
         }))
+    };
+
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Accueil",
+                "item": "https://landmark.ma"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Services"
+            }
+        ]
     };
 
     return (
         <section className="font-['Jost'] relative min-h-screen">
-            {/* Structured Data Script */}
+            {/* Structured Data Scripts */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsStructuredData) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
             />
 
             {/* Background style */}
