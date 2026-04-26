@@ -37,7 +37,7 @@ export default function ProjectCard({ project, onProjectClick }: ProjectCardProp
                     </div>
                 )}
                 <img
-                    src={`https://api.landmark.ma/public/storage/${project.image}`}
+                    src={`https://api.Landmark.ma/storage/${project.image}`}
                     alt={project.title}
                     className={`w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setImageLoaded(true)}

@@ -8,7 +8,7 @@ interface ServiceCardProps {
     image: string;
 }
 
-const baseURL = "https://api.landmark.ma/public/storage/";
+const baseURL = "https://api.Landmark.ma/storage/";
 
 export default function ServiceCard({ id, title, description, image }: ServiceCardProps) {
     return (

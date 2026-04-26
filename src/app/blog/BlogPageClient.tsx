@@ -35,7 +35,7 @@ export default function BlogPageClient() {
                         }
                         acc[category].push({
                             ...blog,
-                            image: `https://api.Landmark.ma/public/storage/${blog.image}`
+                            image: `https://api.Landmark.ma/storage/${blog.image}`
                         });
                         return acc;
                     }, {});

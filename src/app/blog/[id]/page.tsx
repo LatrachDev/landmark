@@ -24,7 +24,7 @@ async function getBlog(id: string) {
         const data = await res.json();
         return {
             ...data,
-            image: `https://api.landmark.ma/public/storage/${data.image}`
+            image: `https://api.Landmark.ma/storage/${data.image}`
         };
     } catch {
         return null;

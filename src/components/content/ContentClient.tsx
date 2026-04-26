@@ -42,8 +42,8 @@ const ContentClient = ({ contents }: ContentClientProps) => {
                     {contents.map((content) => (
                         <VideoCard
                             key={content.id}
-                            videoUrl={`https://api.Landmark.ma/public/storage/${content.video}`}
-                            thumbnailUrl={`https://api.Landmark.ma/public/storage/${content.thumbnail}`}
+                            videoUrl={`https://api.Landmark.ma/storage/${content.video}`}
+                            thumbnailUrl={`https://api.Landmark.ma/storage/${content.thumbnail}`}
                             title={content.title}
                             views={content.views}
                             onVideoPlay={handleVideoPlay}

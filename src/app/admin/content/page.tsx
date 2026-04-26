@@ -305,7 +305,7 @@ export default function ContentManagementPage() {
                                         ref={(el) => {
                                             videoRefs.current[content.id] = el;
                                         }}
-                                        src={`https://api.Landmark.ma/public/storage/${content.video}`}
+                                        src={`https://api.Landmark.ma/storage/${content.video}`}
                                         className={`absolute h-full w-full object-cover ${playingVideoId === content.id ? 'opacity-100' : 'opacity-0'}`}
                                         onClick={() => togglePlayVideo(content.id)}
                                         onEnded={() => setPlayingVideoId(null)}
@@ -314,7 +314,7 @@ export default function ContentManagementPage() {
                                     {playingVideoId !== content.id && (
                                         <>
                                             {content.thumbnail ? (
-                                                <img src={`https://api.Landmark.ma/public/storage/${content.thumbnail}`} alt={content.title} className="absolute h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+                                                <img src={`https://api.Landmark.ma/storage/${content.thumbnail}`} alt={content.title} className="absolute h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
                                             ) : (
                                                 <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-black uppercase text-[10px]">No Poster</div>
                                             )}

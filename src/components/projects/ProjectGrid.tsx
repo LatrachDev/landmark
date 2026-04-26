@@ -130,7 +130,7 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                 aria-label={`Voir les détails du projet ${project.title}`}
                             >
                                 <ImageWithPlaceholder
-                                    src={`https://api.landmark.ma/public/storage/${project.image}`}
+                                    src={`https://api.Landmark.ma/storage/${project.image}`}
                                     alt={`Image du projet ${project.title}`}
                                     className="w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105"
                                 />
@@ -227,7 +227,7 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                         </div>
                                     )}
                                     <img
-                                        src={`https://api.landmark.ma/public/storage/${selectedProject.landing}`}
+                                        src={`https://api.Landmark.ma/storage/${selectedProject.landing}`}
                                         alt={`Page d'accueil du projet ${selectedProject.title}`}
                                         className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                         onLoad={() => setModalImageLoaded(true)}

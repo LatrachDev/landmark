@@ -326,7 +326,7 @@ export default function TeamManagementPage() {
                             >
                                 <div className="relative aspect-square w-full rounded-[2rem] overflow-hidden mb-6 bg-gray-100">
                                     {member.image ? (
-                                        <img src={`https://api.Landmark.ma/public/storage/${member.image}`} alt={member.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        <img src={`https://api.Landmark.ma/storage/${member.image}`} alt={member.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                     ) : (
                                         <div className="h-full w-full flex items-center justify-center text-gray-300 font-black uppercase text-[10px]">No Identity</div>
                                     )}

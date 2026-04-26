@@ -282,8 +282,8 @@ export default function ProjectsManagementPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {projects.data?.map((project: any) => (
                             <motion.div layout key={project.id} className="group bg-white rounded-[2.5rem] p-6 border border-gray-50 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.05)] transition-all flex flex-col h-full">
-                                <div className="relative aspect-video w-full rounded-[2rem] overflow-hidden mb-6 bg-gray-100">
-                                    <img src={`https://api.Landmark.ma/public/storage/${project.image}`} alt={project.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                <div className="relative aspect-video w-full rounded-4xl overflow-hidden mb-6 bg-gray-100">
+                                    <img src={`https://api.Landmark.ma/storage/${project.image}`} alt={project.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                     <div className="absolute top-4 right-4 flex flex-col gap-2 transform translate-x-12 group-hover:translate-x-0 transition-transform duration-500">
                                         <button onClick={() => handleEditClick(project)} className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-[#010E26] hover:bg-[#445EF2] hover:text-white transition-all"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z" /></svg></button>
                                         <button onClick={() => handleDeleteClick(project)} className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
@@ -294,7 +294,7 @@ export default function ProjectsManagementPage() {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="flex-grow">
+                                <div className="grow">
                                     <h3 className="text-xl font-bold text-[#010E26] uppercase mb-3 line-clamp-1">{project.title}</h3>
                                     <p className="text-gray-500 text-sm font-medium line-clamp-2 leading-relaxed mb-6">{project.description}</p>
                                 </div>
@@ -307,7 +307,7 @@ export default function ProjectsManagementPage() {
             {/* Delete Modal */}
             <AnimatePresence>
                 {showDeleteModal && (
-                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-6">
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-100 p-6">
                         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-white rounded-[2.5rem] shadow-2xl p-10 max-w-md w-full text-center">
                             <div className="w-20 h-20 bg-red-50 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-8"><svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.982 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg></div>
                             <h3 className="text-2xl font-black text-[#010E26] uppercase mb-4">Retirer ce projet ?</h3>

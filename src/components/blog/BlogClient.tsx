@@ -24,7 +24,7 @@ interface BlogClientProps {
 }
 
 const BlogClient = ({ blogs, hideHeader = false }: BlogClientProps) => {
-    const baseURL = 'https://api.Landmark.ma/public/storage/';
+    const baseURL = 'https://api.Landmark.ma/storage/';
 
     const truncateText = (text: string, maxLength = 100) => {
         if (!text) return '';

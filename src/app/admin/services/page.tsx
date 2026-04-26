@@ -297,7 +297,7 @@ export default function ServicesManagementPage() {
                                         {formData.currentImage && showUpdateForm && !formData.image && (
                                             <div className="mb-2 ml-1">
                                                 <p className="text-gray-400 text-[10px] uppercase font-bold mb-2">Image actuelle:</p>
-                                                <img src={`https://api.Landmark.ma/public/storage/${formData.currentImage}`} className="h-16 w-16 object-cover rounded-xl border border-gray-100" alt="Current" />
+                                                <img src={`https://api.Landmark.ma/storage/${formData.currentImage}`} className="h-16 w-16 object-cover rounded-xl border border-gray-100" alt="Current" />
                                             </div>
                                         )}
                                         <input type="file" name="image" onChange={handleInputChange} accept="image/*" required={showCreateForm} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-gray-100 file:text-[#010E26] hover:file:bg-[#445EF2] hover:file:text-white file:transition-all" />
@@ -330,7 +330,7 @@ export default function ServicesManagementPage() {
                                 <motion.div layout key={service.id} className="group bg-white rounded-[2.5rem] p-6 border border-gray-50 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.05)] transition-all flex flex-col h-full">
                                     <div className="relative aspect-[4/3] w-full rounded-[2rem] overflow-hidden mb-6 bg-gray-100">
                                         {service.image ? (
-                                            <img src={`https://api.Landmark.ma/public/storage/${service.image}`} alt={service.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                            <img src={`https://api.Landmark.ma/storage/${service.image}`} alt={service.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                         ) : (
                                             <div className="h-full w-full flex items-center justify-center text-gray-300 font-black uppercase text-[10px]">No Thumbnail</div>
                                         )}

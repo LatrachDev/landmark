@@ -55,7 +55,7 @@ async function getBlogData(): Promise<BlogCategory[]> {
                 }
                 acc[category].push({
                     ...blog,
-                    image: `https://api.landmark.ma/public/storage/${blog.image}`
+                    image: `https://api.Landmark.ma/storage/${blog.image}`
                 });
                 return acc;
             }, {});

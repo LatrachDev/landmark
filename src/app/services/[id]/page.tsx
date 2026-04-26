@@ -25,7 +25,7 @@ async function getService(id: string) {
         const data = await res.json();
         return {
             ...data,
-            imageUrl: `https://api.landmark.ma/public/storage/${data.image}`,
+            imageUrl: `https://api.Landmark.ma/storage/${data.image}`,
         };
     } catch (error) {
         console.error('Error fetching service:', error);

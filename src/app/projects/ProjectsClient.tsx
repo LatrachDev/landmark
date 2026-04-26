@@ -140,7 +140,7 @@ export default function ProjectsClient({ initialProjects, initialContents }: Pro
                 "position": index + 1,
                 "name": project.title,
                 "description": project.description,
-                "image": `https://api.landmark.ma/public/storage/${project.image}`,
+                "image": `https://api.Landmark.ma/storage/${project.image}`,
                 "creator": {
                     "@type": "Organization",
                     "name": "Landmark Agency"
@@ -207,7 +207,7 @@ export default function ProjectsClient({ initialProjects, initialContents }: Pro
                                         aria-label={`Voir les détails du projet ${project.title}`}
                                     >
                                         <ImageWithPlaceholder
-                                            src={`https://api.landmark.ma/public/storage/${project.image}`}
+                                            src={`https://api.Landmark.ma/storage/${project.image}`}
                                             alt={project.title}
                                             className="w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105"
                                             fill
@@ -249,8 +249,8 @@ export default function ProjectsClient({ initialProjects, initialContents }: Pro
                             {contents.map((content) => (
                                 <VideoCard
                                     key={content.id}
-                                    videoUrl={`https://api.landmark.ma/public/storage/${content.video}`}
-                                    thumbnailUrl={`https://api.landmark.ma/public/storage/${content.thumbnail}`}
+                                    videoUrl={`https://api.Landmark.ma/storage/${content.video}`}
+                                    thumbnailUrl={`https://api.Landmark.ma/storage/${content.thumbnail}`}
                                     title={content.title}
                                     views={content.views}
                                     onVideoPlay={handleVideoPlay}
@@ -324,7 +324,7 @@ export default function ProjectsClient({ initialProjects, initialContents }: Pro
                                     </div>
                                 )}
                                 <img
-                                    src={`https://api.landmark.ma/public/storage/${selectedProject.landing}`}
+                                    src={`https://api.Landmark.ma/storage/${selectedProject.landing}`}
                                     alt={`Page d'accueil du projet ${selectedProject.title}`}
                                     className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                     onLoad={() => setModalImageLoaded(true)}

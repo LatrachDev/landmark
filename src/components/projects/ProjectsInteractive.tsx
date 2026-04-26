@@ -122,8 +122,8 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                         {contents.map((content) => (
                             <VideoCard
                                 key={content.id}
-                                videoUrl={`https://api.landmark.ma/public/storage/${content.video}`}
-                                thumbnailUrl={`https://api.landmark.ma/public/storage/${content.thumbnail}`}
+                                videoUrl={`https://api.Landmark.ma/storage/${content.video}`}
+                                thumbnailUrl={`https://api.Landmark.ma/storage/${content.thumbnail}`}
                                 title={content.title}
                                 views={content.views}
                                 onVideoPlay={handleVideoPlay}
@@ -194,7 +194,7 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                                     </div>
                                 )}
                                 <img
-                                    src={`https://api.landmark.ma/public/storage/${selectedProject.landing}`}
+                                    src={`https://api.Landmark.ma/storage/${selectedProject.landing}`}
                                     alt={`Page d'accueil du projet ${selectedProject.title}`}
                                     className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                     onLoad={() => setModalImageLoaded(true)}

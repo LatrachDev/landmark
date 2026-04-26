@@ -101,7 +101,7 @@ export default function AboutClient({ initialTeamMembers }: AboutClientProps) {
                                 {/* Tilted Card - Wrapper with aspect ratio */}
                                 <div className="w-full aspect-square">
                                     <TiltedCard
-                                        imageSrc={`https://api.Landmark.ma/public/storage/${image}`}
+                                        imageSrc={`https://api.Landmark.ma/storage/${image}`}
                                         altText={`Photo de ${name}`}
                                         captionText={name}
                                         containerHeight="100%"
