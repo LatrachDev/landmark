@@ -30,10 +30,13 @@ export default function BlogManagementPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<any>({});
 
+    const CATEGORIES = ['MARKETING', 'BRANDING', 'CONTENT'] as const;
+
     const [formData, setFormData] = useState<any>({
         title: '',
         description: '',
         image: null,
+        category: '',
     });
 
     const router = useRouter();
@@ -77,7 +80,7 @@ export default function BlogManagementPage() {
     };
 
     const handleCreateClick = () => {
-        setFormData({ title: '', description: '', image: null });
+        setFormData({ title: '', description: '', image: null, category: '' });
         setErrors({});
         setShowCreateForm(true);
         setShowUpdateForm(false);
@@ -88,7 +91,8 @@ export default function BlogManagementPage() {
         setFormData({
             title: blog.title,
             description: blog.description,
-            image: null
+            image: null,
+            category: blog.category || '',
         });
         setErrors({});
         setShowUpdateForm(true);
@@ -111,6 +115,7 @@ export default function BlogManagementPage() {
             const formDataToSend = new FormData();
             formDataToSend.append('title', formData.title);
             formDataToSend.append('description', formData.description);
+            formDataToSend.append('category', formData.category);
             if (formData.image) formDataToSend.append('image', formData.image);
 
             await api.blog.create(formDataToSend);
@@ -135,6 +140,7 @@ export default function BlogManagementPage() {
             const formDataToSend = new FormData();
             formDataToSend.append('title', formData.title);
             formDataToSend.append('description', formData.description);
+            formDataToSend.append('category', formData.category);
             formDataToSend.append('_method', 'PUT');
             if (formData.image) formDataToSend.append('image', formData.image);
 
@@ -229,6 +235,16 @@ export default function BlogManagementPage() {
                                         <textarea name="description" value={formData.description} onChange={handleInputChange} required rows={6} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all" />
                                         {errors.description && <p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">{errors.description[0]}</p>}
                                     </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Catégorie *</label>
+                                        <select name="category" value={formData.category} onChange={handleInputChange} required className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all appearance-none cursor-pointer">
+                                            <option value="" disabled>Sélectionner une catégorie</option>
+                                            {CATEGORIES.map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
+                                        {errors.category && <p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">{errors.category[0]}</p>}
+                                    </div>
                                     <div className="md:col-span-2 space-y-2">
                                         <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Image de couverture {showCreateForm ? '*' : '(optionnel)'}</label>
                                         <input type="file" name="image" onChange={handleInputChange} accept="image/*" required={showCreateForm} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-gray-100 file:text-[#010E26] hover:file:bg-[#445EF2] hover:file:text-white file:transition-all" />
@@ -268,6 +284,10 @@ export default function BlogManagementPage() {
                                     <h3 className="text-xl font-bold text-[#010E26] uppercase line-clamp-2 leading-tight mb-4">{blog.title}</h3>
                                     <p className="text-gray-500 text-sm font-medium line-clamp-3 leading-relaxed mb-6">{blog.description}</p>
                                     <div className="flex items-center gap-2 mt-auto pt-4 text-gray-400 text-[10px] font-black uppercase tracking-widest border-t border-gray-50">
+                                        {blog.category && (
+                                            <span className="px-2 py-1 bg-[#445EF2]/10 text-[#445EF2] rounded-lg text-[9px] font-black tracking-widest">{blog.category}</span>
+                                        )}
+                                        <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
                                         <span>{blog.created_at ? new Date(blog.created_at).toLocaleDateString() : 'Date inconnue'}</span>
                                         <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
                                         <span>Par Landmark</span>
