@@ -8,12 +8,12 @@
     "theme_color": "#010e26",
     "icons": [
         {
-            "src": "/favicon.png",
+            "src": "/lkicon.png",
             "sizes": "32x32",
             "type": "image/png"
         },
         {
-            "src": "/favicon.png",
+            "src": "/lkicon.png",
             "sizes": "16x16",
             "type": "image/png"
         }

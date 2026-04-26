@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'; // Changed from react-router-dom
+import Image from 'next/image';
 
 const Promotion = () => {
   const [timeLeft, setTimeLeft] = useState('00 : 00 : 00 : 00');
@@ -49,18 +50,19 @@ const Promotion = () => {
   }, []);
 
   return (
-    <div className="bg-[#445EF2] font-[Jost] sticky py-4 px-4 z-50 sm:px-20 text-white w-full flex flex-col sm:flex-row items-center">
-      <div className="flex-1 flex items-start justify-between gap-1 sm:gap-2 text-xs sm:text-base">
-        <div className="w-8/12">
-          <span className="text-left mr-2 sm:w-full text-xs sm:text-sm font-bold uppercase">
-            -25 % sur tous nos services, Offre Limitée
+    <div className="bg-[#FFC300] font-[Jost] sticky py-4 px-4 z-50 sm:px-20 text-white w-full flex flex-col sm:flex-row items-center animate-slide-down">
+      <div className="flex-1 flex items-center justify-between gap-2 text-xs sm:text-base flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-left text-xs text-[#010E26] sm:text-sm font-bold uppercase whitespace-nowrap">
+            -10 % sur tous nos services, Offre limitée
           </span>
-          <span className="sm:bg-gray-700 py-1 sm:w-[170px] text-center inline-block">
+          <span className="sm:bg-[#000000]/50 py-1 px-4 text-center inline-flex items-center gap-1 whitespace-nowrap">
+            <Image src="/icones/timer.png" alt="timer" width={16} height={16} className="shrink-0" />
             {timeLeft}
           </span>
         </div>
-        {/* Updated Link */}
-        <Link href={'/offre'} className="bg-gray-100 text-center font-bold hover:bg-gray-200 hover:scale-105 duration-300 text-black px-3 sm:px-4 py-1 cursor-pointer text-xs sm:text-sm transition-colors">
+        <Link href={'/offre'} className="bg-[#000000] py-2 text-center font-bold hover:scale-105 duration-300 text-[#F2F2F2] px-3 sm:px-4 cursor-pointer text-xs sm:text-sm transition-colors inline-flex items-center gap-2 whitespace-nowrap shrink-0">
+          <Image src="/icones/offre.png" alt="offre" width={16} height={16} className="shrink-0" />
           Économisez Maintenant
         </Link>
       </div>

@@ -156,10 +156,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon.png', sizes: '16x16', type: 'image/png' },
+      { url: '/lkicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/lkicon.png', sizes: '16x16', type: 'image/png' },
     ],
-    apple: '/favicon.png',
+    apple: '/lkicon.png',
   },
   manifest: '/site.webmanifest',
   other: {
