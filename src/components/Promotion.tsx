@@ -50,27 +50,27 @@ const Promotion = () => {
   }, []);
 
   return (
-    <div className="bg-[#FFC300] font-[Jost] sticky py-4 px-4 z-50 sm:px-20 text-white w-full flex flex-col sm:flex-row items-center animate-slide-down">
-      <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-base w-full">
+    <div className="bg-[#FFC300] font-[Jost] sticky py-4 px-4 sm:px-8 lg:px-20 z-50 text-white w-full flex flex-col md:flex-row items-center animate-slide-down">
+      <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 w-full">
         <div className="flex items-center gap-2">
-          <span className="text-left text-xs text-[#010E26] sm:text-sm font-bold uppercase whitespace-nowrap">
+          <span className="text-left text-xs md:text-sm font-bold uppercase text-[#010E26] whitespace-nowrap">
             -10 % sur tous nos services, Offre limitée
           </span>
-          {/* desktop: timer sits next to the text */}
-          <span className="hidden sm:inline-flex bg-[#000000]/50 py-1 px-4 text-center items-center gap-1 whitespace-nowrap">
-            <Image src="/icones/timer.png" alt="timer" width={16} height={16} className="shrink-0" />
+          {/* tablet/desktop: timer next to the text */}
+          <span className="hidden md:inline-flex bg-[#000000]/50 py-2 px-4 items-center gap-1 whitespace-nowrap text-[16px]">
+            <Image src="/icones/timer.png" alt="timer" width={24} height={24} className="shrink-0" />
             {timeLeft}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          {/* mobile: timer sits next to the button */}
-          <span className="sm:hidden bg-[#000000]/50 py-1 px-4 text-center inline-flex items-center gap-1 whitespace-nowrap">
-            <Image src="/icones/timer.png" alt="timer" width={16} height={16} className="shrink-0" />
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          {/* mobile: timer fills half the row */}
+          <span className="md:hidden bg-[#000000]/50 py-2 px-4 flex-1 inline-flex justify-center items-center gap-1 whitespace-nowrap text-[14px]">
+            <Image src="/icones/timer.png" alt="timer" width={20} height={20} className="shrink-0" />
             {timeLeft}
           </span>
-          <Link href={'/offre'} className="bg-[#000000] py-2 text-center font-bold hover:scale-105 duration-300 text-[#F2F2F2] px-3 sm:px-4 cursor-pointer text-xs sm:text-sm transition-colors inline-flex items-center gap-2 whitespace-nowrap shrink-0">
-            <Image src="/icones/offre.png" alt="offre" width={16} height={16} className="shrink-0" />
-            Économisez Maintenant
+          <Link href={'/offre'} className="bg-[#000000] py-2 flex-1 md:flex-none text-center font-bold hover:scale-105 duration-300 text-[#F2F2F2] px-3 md:px-4 cursor-pointer text-[14px] md:text-[16px] transition-colors inline-flex justify-center items-center gap-2 whitespace-nowrap">
+            <Image src="/icones/offre.png" alt="offre" width={20} height={20} className="shrink-0" />
+            Économisez<span className="hidden min-[380px]:inline">&nbsp;Maintenant</span>
           </Link>
         </div>
       </div>
