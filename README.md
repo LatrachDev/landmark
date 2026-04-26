@@ -1,6 +1,6 @@
 # 📈 Landmark – Marketing Agency Website
 <p>
-    <img style="width: 200px; margin-top: 20px; margin-bottom: 20px;" src="./client/src/assets/logotype/white.png" alt="Landmark Agency Logo"/>
+    <img style="width: 200px; margin-top: 20px; margin-bottom: 20px;" src="./src/assets/logotype/white.png" alt="Landmark Agency Logo"/>
 </p>
 
 Landmark is a modern, responsive website built for a marketing agency. This project showcases services, client success stories, project portfolios, blog content, and more — all designed with a sleek, professional look and optimized for user experience.
@@ -46,7 +46,6 @@ This project includes a modern **Next.js (App Router)** front-end. It was origin
 ## 📁 File Structure
 
 ```
-client/
 ├── public/
 │   ├── robots.txt
 │   └── site.webmanifest
@@ -80,7 +79,7 @@ client/
 
 ```bash
 git clone https://github.com/LatrachDev/landmark.git
-cd landmark/client
+cd landmark
 npm install
 ```
 
@@ -129,7 +128,7 @@ Landmark aims to provide a professional online presence for modern marketing age
 
 ## 📷 Preview
 
-> ![Homepage Screenshot](./client/src/assets/JPG/screenshot.png)
+> ![Homepage Screenshot](./src/assets/JPG/screenshot.png)
 
 ---
 
