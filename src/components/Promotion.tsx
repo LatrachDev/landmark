@@ -68,9 +68,9 @@ const Promotion = () => {
             <Image src="/icones/timer.png" alt="timer" width={20} height={20} className="shrink-0" />
             {timeLeft}
           </span>
-          <Link href={'/offre'} className="bg-[#000000] py-2 flex-1 md:flex-none text-center font-bold hover:scale-105 duration-300 text-[#F2F2F2] px-3 md:px-4 cursor-pointer text-[14px] md:text-[16px] transition-colors inline-flex justify-center items-center gap-2 whitespace-nowrap">
+          <Link href={'/offre'} className="bg-[#000000] py-2 flex-1 md:flex-none text-center font-bold hover:scale-105 duration-300 text-[#F2F2F2] px-3 md:px-4 cursor-pointer text-[12px] md:text-[16px] transition-colors inline-flex justify-center items-center gap-2 whitespace-nowrap">
             <Image src="/icones/offre.png" alt="offre" width={20} height={20} className="shrink-0" />
-            Économisez<span className="hidden min-[380px]:inline">&nbsp;Maintenant</span>
+            Économisez<span className="hidden min-[390px]:inline">&nbsp;Maintenant</span>
           </Link>
         </div>
       </div>

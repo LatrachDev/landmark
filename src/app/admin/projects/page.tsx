@@ -280,7 +280,7 @@ export default function ProjectsManagementPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {projects.data?.map((project: any) => (
+                        {(Array.isArray(projects) ? projects : (projects?.data || [])).map((project: any) => (
                             <motion.div layout key={project.id} className="group bg-white rounded-[2.5rem] p-6 border border-gray-50 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.05)] transition-all flex flex-col h-full">
                                 <div className="relative aspect-video w-full rounded-4xl overflow-hidden mb-6 bg-gray-100">
                                     <img src={`https://api.Landmark.ma/storage/${project.image}`} alt={project.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
