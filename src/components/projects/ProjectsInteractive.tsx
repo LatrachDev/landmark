@@ -4,6 +4,12 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import ProjectCard from './ProjectCard';
 import VideoCard from '@/components/content/VideoCard';
 
+const storageUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${(process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma').replace(/\/$/, '')}/storage/${path}`;
+};
+
 interface Project {
     id: string | number;
     title: string;
@@ -122,8 +128,8 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                         {contents.map((content) => (
                             <VideoCard
                                 key={content.id}
-                                videoUrl={`https://api.Landmark.ma/storage/${content.video}`}
-                                thumbnailUrl={`https://api.Landmark.ma/storage/${content.thumbnail}`}
+                                videoUrl={storageUrl(content.video)}
+                                thumbnailUrl={storageUrl(content.thumbnail)}
                                 title={content.title}
                                 views={content.views}
                                 onVideoPlay={handleVideoPlay}
@@ -190,14 +196,23 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                             <div className="relative w-full min-h-[200px]">
                                 {!modalImageLoaded && (
                                     <div className="w-full min-h-[400px] bg-gray-200 rounded-md animate-pulse overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
+                                        <div className="absolute inset-0 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
                                     </div>
                                 )}
                                 <img
-                                    src={`https://api.Landmark.ma/storage/${selectedProject.landing}`}
+                                    src={storageUrl(selectedProject.landing || selectedProject.image)}
                                     alt={`Page d'accueil du projet ${selectedProject.title}`}
                                     className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                     onLoad={() => setModalImageLoaded(true)}
+                                    onError={(e) => {
+                                        const img = e.currentTarget;
+                                        const fallback = storageUrl(selectedProject.image);
+                                        if (img.src !== fallback) {
+                                            img.src = fallback;
+                                        } else {
+                                            setModalImageLoaded(true);
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>

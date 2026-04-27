@@ -2,12 +2,19 @@
 
 import { useState } from 'react';
 
+const storageUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${(process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma').replace(/\/$/, '')}/storage/${path}`;
+};
+
 interface ProjectCardProps {
     project: {
         id: string | number;
         title: string;
         description: string;
         image: string;
+        landing: string;
         view_percent: number | string;
     };
     onProjectClick: (project: any) => void;
@@ -33,11 +40,11 @@ export default function ProjectCard({ project, onProjectClick }: ProjectCardProp
             >
                 {!imageLoaded && (
                     <div className="absolute inset-0 bg-gray-200 animate-pulse">
-                        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
+                        <div className="absolute inset-0 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite]" />
                     </div>
                 )}
                 <img
-                    src={`https://api.Landmark.ma/storage/${project.image}`}
+                    src={storageUrl(project.image)}
                     alt={project.title}
                     className={`w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setImageLoaded(true)}

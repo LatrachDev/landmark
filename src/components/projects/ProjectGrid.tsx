@@ -3,6 +3,12 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import Link from 'next/link';
 
+const storageUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${(process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma').replace(/\/$/, '')}/storage/${path}`;
+};
+
 interface Project {
     id: string | number;
     title: string;
@@ -130,7 +136,7 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                 aria-label={`Voir les détails du projet ${project.title}`}
                             >
                                 <ImageWithPlaceholder
-                                    src={`https://api.Landmark.ma/storage/${project.image}`}
+                                    src={storageUrl(project.image)}
                                     alt={`Image du projet ${project.title}`}
                                     className="w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105"
                                 />
@@ -227,10 +233,19 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                         </div>
                                     )}
                                     <img
-                                        src={`https://api.Landmark.ma/storage/${selectedProject.landing}`}
+                                        src={storageUrl(selectedProject.landing || selectedProject.image)}
                                         alt={`Page d'accueil du projet ${selectedProject.title}`}
                                         className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                         onLoad={() => setModalImageLoaded(true)}
+                                        onError={(e) => {
+                                            const img = e.currentTarget;
+                                            const fallback = storageUrl(selectedProject.image);
+                                            if (img.src !== fallback) {
+                                                img.src = fallback;
+                                            } else {
+                                                setModalImageLoaded(true);
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>
