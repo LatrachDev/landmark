@@ -1,16 +1,8 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import Footer from '@/components/footer/Footer';
-import Image from 'next/image';
+import { useEffect } from 'react';
 
-interface Service {
-    id: string | number;
-    title: string;
-    description: string;
-    imageUrl: string;
-    created_at: string;
-}
+import type { Service } from '@/types/service';
 
 interface ServiceDetailClientProps {
     service: Service;
@@ -50,21 +42,18 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
         <div className="font-['Jost'] bg-[#f9fafb] text-[#1f2937] min-h-screen flex flex-col">
             <main className="mx-auto w-[90%] px-4 sm:px-6 mt-10 flex-grow">
                 <div className="text-sm mb-5 text-gray-500">
-                    <time dateTime={service.created_at}>
-                        Publié le {new Date(service.created_at).toLocaleDateString()}
+                    <time dateTime={service.createdAt}>
+                        Publié le {new Date(service.createdAt).toLocaleDateString()}
                     </time>
                     <span className="mx-2">•</span>
                     <span>Par Landmark Team</span>
                 </div>
 
-                <div className="relative w-full md:h-[500px] h-[300px] rounded-2xl overflow-hidden shadow-2xl mb-12 transition-transform duration-500 hover:scale-[1.005]">
-                    <Image
+                <div className="w-full md:h-[500px] h-[300px] rounded-2xl overflow-hidden shadow-2xl mb-12 transition-transform duration-500 hover:scale-[1.005]">
+                    <img
                         src={service.imageUrl}
                         alt={service.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 90vw"
-                        className="object-cover"
-                        priority
+                        className="w-full h-full object-cover"
                     />
                 </div>
 

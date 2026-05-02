@@ -29,12 +29,28 @@ export async function proxyToBackend(
     }
   }
 
-  const res = await fetch(`${API_URL}${backendPath}`, {
-    method: request.method,
-    headers,
-    body,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${backendPath}`, {
+      method: request.method,
+      headers,
+      body,
+    });
+  } catch {
+    return NextResponse.json({ message: 'Backend unreachable' }, { status: 502 });
+  }
 
-  const data = await res.json();
+  // 204 No Content — no body to parse
+  if (res.status === 204) {
+    return new NextResponse(null, { status: 204 });
+  }
+
+  let data: unknown;
+  try {
+    data = await res.json();
+  } catch {
+    data = { message: 'Upstream returned non-JSON response' };
+  }
+
   return NextResponse.json(data, { status: res.status });
 }
