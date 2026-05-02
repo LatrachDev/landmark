@@ -1,28 +1,24 @@
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface ServiceCardProps {
-    id: string | number;
+    id: string;
     title: string;
     description: string;
-    image: string;
+    imageUrl: string;
 }
 
-const baseURL = "https://api.Landmark.ma/storage/";
-
-export default function ServiceCard({ id, title, description, image }: ServiceCardProps) {
+export default function ServiceCard({ id, title, description, imageUrl }: ServiceCardProps) {
     return (
         <Link
             href={`/services/${id}`}
             className="flex flex-col bg-white rounded-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-500 cursor-pointer overflow-hidden border border-gray-50/50 group h-full"
         >
             <div className="aspect-[1.6/1] overflow-hidden relative">
-                <Image
-                    src={baseURL + image}
+                <img
+                    src={imageUrl}
                     alt={title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
             </div>
             <div className="p-8 pb-10 flex flex-col flex-1">

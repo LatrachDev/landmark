@@ -76,9 +76,9 @@ export const api = {
         getAll: () => fetch('/api/admin/services').then(handleResponse),
         create: (formData: FormData) =>
             fetch('/api/admin/services', { method: 'POST', body: formData }).then(handleResponse),
-        update: (id: number, formData: FormData) =>
+        update: (id: string, formData: FormData) =>
             fetch(`/api/admin/services/${id}`, { method: 'PUT', body: formData }).then(handleResponse),
-        delete: (id: number) =>
+        delete: (id: string) =>
             fetch(`/api/admin/services/${id}`, { method: 'DELETE' }).then(handleResponse),
     },
 
