@@ -7,7 +7,6 @@ import Link from 'next/link';
 import mainLogo from '@/assets/logotype/main.png';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import Cookies from 'js-cookie';
 import { api } from '@/services/api';
 
 // Route constants
@@ -41,9 +40,8 @@ export default function InboxManagementPage() {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.clear();
-        Cookies.remove('admin_token');
+    const handleLogout = async () => {
+        await api.logout().catch(() => null);
         toast.success('Déconnexion réussie');
         router.push('/');
     };

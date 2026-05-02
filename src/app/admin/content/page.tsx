@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,6 @@ import Link from 'next/link';
 import mainLogo from '@/assets/logotype/main.png';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import Cookies from 'js-cookie';
 import { api } from '@/services/api';
 
 // Route constants
@@ -189,9 +188,8 @@ export default function ContentManagementPage() {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.clear();
-        Cookies.remove('admin_token');
+    const handleLogout = async () => {
+        await api.logout().catch(() => null);
         router.push('/');
     };
 

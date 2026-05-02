@@ -7,7 +7,7 @@ import Link from 'next/link';
 import mainLogo from '@/assets/logotype/main.png';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import Cookies from 'js-cookie';
+import { api } from '@/services/api';
 
 // Route constants
 const ADMIN_TEAM = '/admin/team';
@@ -23,15 +23,13 @@ export default function Dashboard() {
 
     useEffect(() => {
         document.title = 'Dashboard | Landmark Administration';
-        const token = localStorage.getItem("token");
-        if (token) {
-            setIsLoaded(true);
-        }
-    }, []);
+        api.me()
+            .then(() => setIsLoaded(true))
+            .catch(() => router.push('/'));
+    }, [router]);
 
-    const handleLogout = () => {
-        localStorage.clear();
-        Cookies.remove('admin_token');
+    const handleLogout = async () => {
+        await api.logout().catch(() => null); // clears the httpOnly cookie server-side
         toast.success('Déconnexion réussie');
         router.push('/');
     };
