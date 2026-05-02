@@ -1,28 +1,26 @@
 import AboutClient from './AboutClient';
-import { api } from '@/services/api';
 import type { Metadata } from 'next';
+import type { TeamMember } from '@/types/team';
 
 export const metadata: Metadata = {
     title: 'About Us | Landmark',
     description: "Découvrez l'équipe créative de Landmark à Oujda. Notre mission : transformer vos idées en marques mémorables grâce à la créativité et la performance. Rencontrez nos experts.",
 };
 
-async function getAboutData() {
+async function getTeamMembers(): Promise<TeamMember[]> {
+    const apiUrl = (process.env.API_URL || 'http://localhost:5000').replace(/\/$/, '');
     try {
-        const data = await api.home.getAbout({
-            next: { revalidate: 3600 }
+        const res = await fetch(`${apiUrl}/api/team`, {
+            next: { revalidate: 3600 },
         });
-        return data.teamMembers || [];
-    } catch (error) {
-        console.error('Error fetching about data:', error);
+        if (!res.ok) return [];
+        return res.json();
+    } catch {
         return [];
     }
 }
 
 export default async function AboutPage() {
-    const teamMembers = await getAboutData();
-
-    return (
-        <AboutClient initialTeamMembers={teamMembers} />
-    );
+    const teamMembers = await getTeamMembers();
+    return <AboutClient initialTeamMembers={teamMembers} />;
 }
