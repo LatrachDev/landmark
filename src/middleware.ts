@@ -1,25 +1,38 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtVerify } from 'jose';
 
-export function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
+const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? '');
 
-    // Only protect routes starting with /admin
-    if (pathname.startsWith('/admin')) {
-        const token = request.cookies.get('admin_token');
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-        // If no token exists, hide the route by showing a 404 Not Found response
-        if (!token) {
-            // Rewriting to a non-existent path to trigger the default or custom not-found page
-            // This makes the route appear as if it doesn't exist to unauthorized users
-            return NextResponse.rewrite(new URL('/not-found-page', request.url));
-        }
-    }
-
+  if (!pathname.startsWith('/admin')) {
     return NextResponse.next();
+  }
+
+  const token = request.cookies.get('admin_token')?.value;
+
+  if (!token) {
+    return NextResponse.rewrite(new URL('/not-found-page', request.url));
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, secret, { algorithms: ['HS256'] });
+
+    if (payload['role'] !== 'LK-ADMIN') {
+      return NextResponse.rewrite(new URL('/not-found-page', request.url));
+    }
+  } catch {
+    // Expired, tampered, or malformed token
+    const response = NextResponse.rewrite(new URL('/not-found-page', request.url));
+    response.cookies.delete('admin_token');
+    return response;
+  }
+
+  return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-    matcher: '/admin/:path*',
+  matcher: '/admin/:path*',
 };

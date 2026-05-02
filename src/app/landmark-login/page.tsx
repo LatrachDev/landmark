@@ -7,7 +7,6 @@ import mainLogo from '@/assets/logotype/main.png';
 import loginImage from '@/assets/JPG/haythamContact.jpg';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import Cookies from 'js-cookie';
 import { api } from '@/services/api';
 import Link from 'next/link';
 
@@ -28,14 +27,15 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const data = await api.login({ email, password });
+            // The JWT is stored as an httpOnly cookie by the server — it never touches JS.
+            // We only receive the admin's email and role as confirmation.
+            await api.login({ email, password });
 
-            localStorage.setItem('token', data.token);
-            Cookies.set('admin_token', data.token, { expires: 1 }); // 1 day
-            toast.success('Bienvenue Haytham !');
+            toast.success('Bienvenue !');
             router.push('/admin');
-        } catch (err: any) {
-            const errorMessage = err?.message || 'Identifiants incorrects';
+        } catch (err: unknown) {
+            const errorMessage =
+                (err as { message?: string })?.message || 'Identifiants incorrects';
             setError(errorMessage);
             toast.error(errorMessage);
         } finally {
@@ -160,7 +160,7 @@ export default function LoginPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#010E26]/60 via-transparent to-transparent" />
                 <div className="absolute bottom-12 left-12 right-12 text-white">
                     <h2 className="text-4xl font-black uppercase mb-4 tracking-tight">Bienvenue</h2>
-                    <p className="text-lg font-medium opacity-90">Accédez à votre espace d'administration</p>
+                    <p className="text-lg font-medium opacity-90">Accédez à votre espace d&apos;administration</p>
                 </div>
             </motion.div>
         </div>
