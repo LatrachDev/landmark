@@ -3,21 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ProjectCard from './ProjectCard';
 import VideoCard from '@/components/content/VideoCard';
+import type { Project } from '@/types/project';
 
+// Only used for legacy video/content URLs from the old API
 const storageUrl = (path: string) => {
     if (!path) return '';
     if (path.startsWith('http')) return path;
     return `${(process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma').replace(/\/$/, '')}/storage/${path}`;
 };
-
-interface Project {
-    id: string | number;
-    title: string;
-    description: string;
-    image: string;
-    landing: string;
-    view_percent: number | string;
-}
 
 interface Content {
     id: string | number;
@@ -39,7 +32,6 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
     const modalRef = useRef<HTMLDivElement>(null);
     const activeVideoRef = useRef<HTMLVideoElement | null>(null);
 
-    // Prevent background scroll and hide navbar when modal is open
     useEffect(() => {
         if (selectedProject) {
             document.body.style.overflow = 'hidden';
@@ -107,8 +99,8 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
 
             {/* Projects Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {projects.map((project, index) => (
-                    <ProjectCard key={index} project={project} onProjectClick={openProjectModal} />
+                {projects.map((project) => (
+                    <ProjectCard key={project.id} project={project} onProjectClick={openProjectModal} />
                 ))}
             </div>
 
@@ -139,7 +131,7 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Modal — shows landing image when project card is clicked */}
             {selectedProject && (
                 <div
                     className="fixed inset-0 backdrop-blur-sm bg-black/60 flex items-center justify-center z-50 overflow-y-auto"
@@ -191,7 +183,7 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                             </button>
                         </div>
 
-                        {/* Modal Content */}
+                        {/* Modal Content — landing image */}
                         <div className="p-6 overflow-y-auto max-h-[calc(100vh-160px)]">
                             <div className="relative w-full min-h-[200px]">
                                 {!modalImageLoaded && (
@@ -200,19 +192,11 @@ export default function ProjectsInteractive({ projects, contents }: ProjectsInte
                                     </div>
                                 )}
                                 <img
-                                    src={storageUrl(selectedProject.landing || selectedProject.image)}
+                                    src={selectedProject.landingUrl}
                                     alt={`Page d'accueil du projet ${selectedProject.title}`}
                                     className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                     onLoad={() => setModalImageLoaded(true)}
-                                    onError={(e) => {
-                                        const img = e.currentTarget;
-                                        const fallback = storageUrl(selectedProject.image);
-                                        if (img.src !== fallback) {
-                                            img.src = fallback;
-                                        } else {
-                                            setModalImageLoaded(true);
-                                        }
-                                    }}
+                                    onError={() => setModalImageLoaded(true)}
                                 />
                             </div>
                         </div>
