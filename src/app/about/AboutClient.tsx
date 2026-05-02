@@ -1,21 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Mission from '@/components/home/Mission';
-import Footer from '@/components/footer/Footer';
 import WebSiteBG from '@/assets/BG/maskBg.png';
 import TiltedCard from '@/components/TiltedCard';
 import { LinkedinFilled, InstagramOutlined } from "@ant-design/icons";
-
-interface TeamMember {
-    id: string | number;
-    name: string;
-    post: string;
-    description: string;
-    image: string;
-    linkedin?: string;
-    instagram?: string;
-}
+import type { TeamMember } from '@/types/team';
 
 interface AboutClientProps {
     initialTeamMembers: TeamMember[];
@@ -96,12 +86,12 @@ export default function AboutClient({ initialTeamMembers }: AboutClientProps) {
 
                     {/* Team Members */}
                     <section className="flex flex-wrap gap-8 md:gap-6 justify-center pt-5">
-                        {teamMembers.map(({ id, name, post, description, image, linkedin, instagram }) => (
+                        {teamMembers.map(({ id, name, role, description, imageUrl, linkedin, instagram }) => (
                             <article key={id} className="w-full sm:w-[48%] lg:w-[30%] text-left">
                                 {/* Tilted Card - Wrapper with aspect ratio */}
                                 <div className="w-full aspect-square">
                                     <TiltedCard
-                                        imageSrc={`https://api.Landmark.ma/storage/${image}`}
+                                        imageSrc={imageUrl}
                                         altText={`Photo de ${name}`}
                                         captionText={name}
                                         containerHeight="100%"
