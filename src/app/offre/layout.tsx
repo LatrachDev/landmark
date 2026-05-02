@@ -1,17 +1,17 @@
 export default function OffreLayout({
-    children,
+	children,
 }: {
-    children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-    return (
-        <>
-            {children}
-            <style>{`
+	return (
+		<>
+			{children}
+			<style>{`
                 body > footer,
                 body > div > footer {
                     display: none !important;
                 }
             `}</style>
-        </>
-    );
+		</>
+	);
 }

@@ -1,16 +1,20 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import Footer from './Footer';
+import { usePathname } from "next/navigation";
+import Footer from "./Footer";
 
-const HIDDEN_ON: string[] = ['/offre', '/landmark-login', '/admin'];
+const HIDDEN_ON: string[] = ["/offre", "/landmark-login", "/admin"];
 
 export default function ConditionalFooter() {
-    const pathname = usePathname();
+	const pathname = usePathname();
 
-    if (HIDDEN_ON.some((path) => pathname === path || pathname.startsWith(path + '/'))) {
-        return null;
-    }
+	if (
+		HIDDEN_ON.some(
+			(path) => pathname === path || pathname.startsWith(path + "/"),
+		)
+	) {
+		return null;
+	}
 
-    return <Footer />;
+	return <Footer />;
 }

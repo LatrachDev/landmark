@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Connexion Administration | Landmark Agency",
-  description: "Accès réservé à l'administration Landmark",
-  robots: "noindex, nofollow",
+	title: "Connexion Administration | Landmark Agency",
+	description: "Accès réservé à l'administration Landmark",
+	robots: "noindex, nofollow",
 };
 
 export default function LoginLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return <>{children}</>;
+	return <>{children}</>;
 }

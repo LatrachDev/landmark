@@ -1,74 +1,73 @@
 @import "tailwindcss";
 
 @theme {
-  --font-bodoni: var(--font-bodoni);
-  --font-dm: var(--font-dm-sans);
-  --font-jost: var(--font-jost);
+	--font-bodoni: var(--font-bodoni);
+	--font-dm: var(--font-dm-sans);
+	--font-jost: var(--font-jost);
 }
 
 @keyframes slide-down {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+	from {
+		transform: translateY(-100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
 }
 
 .animate-slide-down {
-  animation: slide-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: slide-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 
 * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom Swiper Styles */
 .swiper-button-next,
 .swiper-button-prev {
-  color: #445EF2 !important;
-  background: white;
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  z-index: 20 !important;
+	color: #445ef2 !important;
+	background: white;
+	width: 44px !important;
+	height: 44px !important;
+	border-radius: 50%;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+	z-index: 20 !important;
 }
 
 .swiper-button-next:after,
 .swiper-button-prev:after {
-  font-size: 18px !important;
-  font-weight: bold;
+	font-size: 18px !important;
+	font-weight: bold;
 }
 
 .swiper-button-next:hover,
 .swiper-button-prev:hover {
-  background: #445EF2;
-  color: white !important;
-  transform: scale(1.1);
+	background: #445ef2;
+	color: white !important;
+	transform: scale(1.1);
 }
 
 @media (max-width: 768px) {
-
-  .swiper-button-next,
-  .swiper-button-prev {
-    display: none !important;
-  }
+	.swiper-button-next,
+	.swiper-button-prev {
+		display: none !important;
+	}
 }
 
 /* Hide navbar and promotion bar when project modal is open */
 body[data-modal-open="true"] nav {
-  display: none !important;
+	display: none !important;
 }
 
 body[data-modal-open="true"] .sticky.z-50 {
-  display: none !important;
+	display: none !important;
 }
