@@ -1,22 +1,34 @@
 import ContentClient from './ContentClient';
-import { api } from '@/services/api';
+import Thumbnail1 from '@/assets/Landing/reels/thumbnails/cosmarkThumbnail.jpg';
+import Thumbnail2 from '@/assets/Landing/reels/thumbnails/ikramThumbnail.jpg';
+import Thumbnail3 from '@/assets/Landing/reels/thumbnails/brimoThumbnail.jpg';
 
-async function getContent() {
-    try {
-        const data = await api.home.getBlogs({
-            next: { revalidate: 3600 }
-        });
-        return data.threeContents || [];
-    } catch (error) {
-        console.error('Error fetching content on server:', error);
-        return [];
-    }
-}
+const staticContents = [
+    {
+        id: 1,
+        video: '/video/Reel1.mp4',
+        thumbnail: Thumbnail1.src,
+        title: 'Reel 1',
+        views: 120000,
+    },
+    {
+        id: 2,
+        video: '/video/Reel2.mp4',
+        thumbnail: Thumbnail2.src,
+        title: 'Reel 2',
+        views: 85000,
+    },
+    {
+        id: 3,
+        video: '/video/Reel3.mp4',
+        thumbnail: Thumbnail3.src,
+        title: 'Reel 3',
+        views: 200000,
+    },
+];
 
-const Content = async () => {
-    const threeContents = await getContent();
-
-    return <ContentClient contents={threeContents} />;
+const Content = () => {
+    return <ContentClient contents={staticContents} />;
 };
 
 export default Content;
