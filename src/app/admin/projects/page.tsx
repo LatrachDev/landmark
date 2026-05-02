@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,8 +8,8 @@ import mainLogo from '@/assets/logotype/main.png';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { api } from '@/services/api';
+import type { Project } from '@/types/project';
 
-// Route constants
 const ADMIN_TEAM = '/admin/team';
 const ADMIN_INBOX = '/admin/inbox';
 const ADMIN_PROJECTS = '/admin/projects';
@@ -17,30 +17,40 @@ const ADMIN_BLOG = '/admin/blog';
 const ADMIN_CONTENT = '/admin/content';
 const ADMIN_SERVICES = '/admin/services';
 
+interface FormState {
+    title: string;
+    description: string;
+    views: number;
+    thumbnailImage: File | null;
+    landingImage: File | null;
+}
+
+const emptyForm = (): FormState => ({
+    title: '',
+    description: '',
+    views: 0,
+    thumbnailImage: null,
+    landingImage: null,
+});
+
 export default function ProjectsManagementPage() {
-    const [projects, setProjects] = useState<any>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showUpdateForm, setShowUpdateForm] = useState(false);
-    const [projectToDelete, setProjectToDelete] = useState<any>(null);
-    const [projectToEdit, setProjectToEdit] = useState<any>(null);
+    const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+    const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [errors, setErrors] = useState<any>({});
+    const [errors, setErrors] = useState<string[]>([]);
 
-    const [formData, setFormData] = useState<any>({
-        title: '',
-        description: '',
-        view_percent: 0,
-        image: null,
-        landing: null
-    });
+    const [formData, setFormData] = useState<FormState>(emptyForm());
 
     const router = useRouter();
 
     useEffect(() => {
-        document.title = "Gestion des Projets | Landmark Administration";
+        document.title = 'Gestion des Projets | Landmark Administration';
         fetchProjects();
     }, []);
 
@@ -56,14 +66,13 @@ export default function ProjectsManagementPage() {
         }
     };
 
-    const handleDeleteClick = (project: any) => {
+    const handleDeleteClick = (project: Project) => {
         setProjectToDelete(project);
         setShowDeleteModal(true);
     };
 
     const handleConfirmDelete = async () => {
         if (!projectToDelete) return;
-
         setIsDeleting(true);
         try {
             await api.projects.delete(projectToDelete.id);
@@ -71,70 +80,70 @@ export default function ProjectsManagementPage() {
             fetchProjects();
             setShowDeleteModal(false);
             setProjectToDelete(null);
-        } catch (err: any) {
-            console.error(err.message || "Suppression échouée !");
-            toast.error(err.message || "Échec de la suppression");
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Échec de la suppression';
+            toast.error(msg);
         } finally {
             setIsDeleting(false);
         }
     };
 
     const handleCreateClick = () => {
-        setFormData({ title: '', description: '', view_percent: 0, image: null, landing: null });
-        setErrors({});
+        setFormData(emptyForm());
+        setErrors([]);
         setShowCreateForm(true);
         setShowUpdateForm(false);
     };
 
-    const handleEditClick = (project: any) => {
+    const handleEditClick = (project: Project) => {
         setProjectToEdit(project);
         setFormData({
             title: project.title,
             description: project.description,
-            view_percent: project.view_percent,
-            image: null,
-            landing: null
+            views: project.views,
+            thumbnailImage: null,
+            landingImage: null,
         });
-        setErrors({});
+        setErrors([]);
         setShowUpdateForm(true);
         setShowCreateForm(false);
     };
 
-    const handleInputChange = (e: any) => {
-        const { name, value, type, files } = e.target;
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const target = e.target as HTMLInputElement;
+        const { name, value, type } = target;
         if (type === 'file') {
-            setFormData((prev: any) => ({ ...prev, [name]: files[0] }));
+            setFormData((prev) => ({ ...prev, [name]: target.files?.[0] ?? null }));
+        } else if (type === 'range' || type === 'number') {
+            setFormData((prev) => ({ ...prev, [name]: parseInt(value) || 0 }));
         } else {
-            setFormData((prev: any) => ({
-                ...prev,
-                [name]: type === 'number' ? parseInt(value) || 0 : value
-            }));
+            setFormData((prev) => ({ ...prev, [name]: value }));
         }
     };
 
     const handleCreateSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setErrors({});
+        setErrors([]);
+
+        const fd = new FormData();
+        fd.append('title', formData.title);
+        fd.append('description', formData.description);
+        fd.append('views', formData.views.toString());
+        if (formData.thumbnailImage) fd.append('thumbnailImage', formData.thumbnailImage);
+        if (formData.landingImage) fd.append('landingImage', formData.landingImage);
 
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append('title', formData.title);
-            formDataToSend.append('description', formData.description);
-            formDataToSend.append('view_percent', formData.view_percent.toString());
-            if (formData.image) formDataToSend.append('image', formData.image);
-            if (formData.landing) formDataToSend.append('landing', formData.landing);
-
-            await api.projects.create(formDataToSend);
-
+            await api.projects.create(fd);
             fetchProjects();
             setShowCreateForm(false);
             toast.success('Nouveau projet publié');
-        } catch (err: any) {
-            if (err.errors) {
-                setErrors(err.errors);
+        } catch (err: unknown) {
+            const body = err as { errors?: string[]; message?: string };
+            if (body?.errors) {
+                setErrors(body.errors);
             } else {
-                toast.error(err.message || 'Erreur lors de la création');
+                toast.error(body?.message || 'Erreur lors de la création');
             }
         } finally {
             setIsSubmitting(false);
@@ -144,30 +153,27 @@ export default function ProjectsManagementPage() {
     const handleUpdateSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!projectToEdit) return;
-
         setIsSubmitting(true);
-        setErrors({});
+        setErrors([]);
+
+        const fd = new FormData();
+        fd.append('title', formData.title);
+        fd.append('description', formData.description);
+        fd.append('views', formData.views.toString());
+        if (formData.thumbnailImage) fd.append('thumbnailImage', formData.thumbnailImage);
+        if (formData.landingImage) fd.append('landingImage', formData.landingImage);
 
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append('title', formData.title);
-            formDataToSend.append('description', formData.description);
-            formDataToSend.append('view_percent', formData.view_percent.toString());
-            formDataToSend.append('_method', 'PUT');
-
-            if (formData.image) formDataToSend.append('image', formData.image);
-            if (formData.landing) formDataToSend.append('landing', formData.landing);
-
-            await api.projects.update(projectToEdit.id, formDataToSend);
-
+            await api.projects.update(projectToEdit.id, fd);
             fetchProjects();
             setShowUpdateForm(false);
             toast.success('Projet mis à jour avec succès');
-        } catch (err: any) {
-            if (err.errors) {
-                setErrors(err.errors);
+        } catch (err: unknown) {
+            const body = err as { errors?: string[]; message?: string };
+            if (body?.errors) {
+                setErrors(body.errors);
             } else {
-                toast.error(err.message || 'Erreur lors de la mise à jour');
+                toast.error(body?.message || 'Erreur lors de la mise à jour');
             }
         } finally {
             setIsSubmitting(false);
@@ -182,7 +188,7 @@ export default function ProjectsManagementPage() {
     const navigateTo = (path: string) => router.push(path);
 
     const adminCards = [
-        { title: "Équipe", icon: '👥', path: ADMIN_TEAM },
+        { title: 'Équipe', icon: '👥', path: ADMIN_TEAM },
         { title: 'Projets', icon: '📁', path: ADMIN_PROJECTS, active: true },
         { title: 'Contenu', icon: '✍️', path: ADMIN_CONTENT },
         { title: 'Blog', icon: '🖼️', path: ADMIN_BLOG },
@@ -192,7 +198,7 @@ export default function ProjectsManagementPage() {
 
     return (
         <div className="font-jost bg-[#fcfdfe] min-h-screen pb-20 overflow-x-hidden">
-            {/* Navigtaion Bar */}
+            {/* Navigation Bar */}
             <nav className="bg-white border-b border-gray-100 sticky top-0 z-30 h-24 flex items-center">
                 <div className="max-w-7xl mx-auto px-6 lg:px-10 w-full flex justify-between items-center">
                     <Link href="/admin">
@@ -233,28 +239,35 @@ export default function ProjectsManagementPage() {
                                 <h2 className="text-2xl font-black text-[#010E26] uppercase mb-8">
                                     {showCreateForm ? 'Créer un nouveau projet' : `Modifier: ${projectToEdit?.title}`}
                                 </h2>
+
+                                {errors.length > 0 && (
+                                    <ul className="mb-6 bg-red-50 border border-red-100 rounded-2xl p-4 space-y-1">
+                                        {errors.map((err, i) => (
+                                            <li key={i} className="text-red-600 text-[11px] font-bold uppercase tracking-wider">{err}</li>
+                                        ))}
+                                    </ul>
+                                )}
+
                                 <form onSubmit={showCreateForm ? handleCreateSubmit : handleUpdateSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Titre du Projet *</label>
                                         <input type="text" name="title" value={formData.title} onChange={handleInputChange} required className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all" />
-                                        {errors.title && <p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">{errors.title[0]}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Impact / Vues ({formData.view_percent}%)</label>
-                                        <input type="range" name="view_percent" value={formData.view_percent} min="0" max="100" onChange={handleInputChange} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#445EF2] mt-4" />
+                                        <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Impact / Vues ({formData.views}%)</label>
+                                        <input type="range" name="views" value={formData.views} min="0" max="100" onChange={handleInputChange} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#445EF2] mt-4" />
                                     </div>
                                     <div className="md:col-span-2 space-y-2">
                                         <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Description *</label>
                                         <textarea name="description" value={formData.description} onChange={handleInputChange} required rows={3} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all" />
-                                        {errors.description && <p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">{errors.description[0]}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Thumbnail {showCreateForm ? '*' : '(optionnel)'}</label>
-                                        <input type="file" name="image" onChange={handleInputChange} accept="image/*" required={showCreateForm} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-gray-100 file:text-[#010E26] hover:file:bg-[#445EF2] hover:file:text-white file:transition-all" />
+                                        <input type="file" name="thumbnailImage" onChange={handleInputChange} accept="image/jpeg,image/png,image/webp,image/gif" required={showCreateForm} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-gray-100 file:text-[#010E26] hover:file:bg-[#445EF2] hover:file:text-white file:transition-all" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">Landing Photo {showCreateForm ? '*' : '(optionnel)'}</label>
-                                        <input type="file" name="landing" onChange={handleInputChange} accept="image/*" required={showCreateForm} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-gray-100 file:text-[#010E26] hover:file:bg-[#445EF2] hover:file:text-white file:transition-all" />
+                                        <input type="file" name="landingImage" onChange={handleInputChange} accept="image/jpeg,image/png,image/webp,image/gif" required={showCreateForm} className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-gray-100 file:text-[#010E26] hover:file:bg-[#445EF2] hover:file:text-white file:transition-all" />
                                     </div>
                                     <div className="md:col-span-2 flex gap-4 pt-4">
                                         <button disabled={isSubmitting} type="submit" className="flex-1 bg-[#445EF2] text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#010E26] transition-all disabled:opacity-50">
@@ -278,17 +291,21 @@ export default function ProjectsManagementPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {(Array.isArray(projects) ? projects : (projects?.data || [])).map((project: any) => (
+                        {projects.map((project) => (
                             <motion.div layout key={project.id} className="group bg-white rounded-[2.5rem] p-6 border border-gray-50 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.05)] transition-all flex flex-col h-full">
                                 <div className="relative aspect-video w-full rounded-4xl overflow-hidden mb-6 bg-gray-100">
-                                    <img src={`https://api.Landmark.ma/storage/${project.image}`} alt={project.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    <img
+                                        src={project.thumbnailUrl}
+                                        alt={project.title}
+                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
                                     <div className="absolute top-4 right-4 flex flex-col gap-2 transform translate-x-12 group-hover:translate-x-0 transition-transform duration-500">
                                         <button onClick={() => handleEditClick(project)} className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-[#010E26] hover:bg-[#445EF2] hover:text-white transition-all"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z" /></svg></button>
                                         <button onClick={() => handleDeleteClick(project)} className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                                     </div>
                                     <div className="absolute bottom-4 left-4">
                                         <span className="bg-white/90 backdrop-blur-sm text-[#445EF2] text-[10px] font-black uppercase px-3 py-1.5 rounded-xl shadow-sm">
-                                            {project.view_percent}% impact
+                                            {project.views}% impact
                                         </span>
                                     </div>
                                 </div>

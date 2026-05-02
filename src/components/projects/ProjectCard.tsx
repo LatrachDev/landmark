@@ -1,23 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-
-const storageUrl = (path: string) => {
-    if (!path) return '';
-    if (path.startsWith('http')) return path;
-    return `${(process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma').replace(/\/$/, '')}/storage/${path}`;
-};
+import type { Project } from '@/types/project';
 
 interface ProjectCardProps {
-    project: {
-        id: string | number;
-        title: string;
-        description: string;
-        image: string;
-        landing: string;
-        view_percent: number | string;
-    };
-    onProjectClick: (project: any) => void;
+    project: Project;
+    onProjectClick: (project: Project) => void;
 }
 
 export default function ProjectCard({ project, onProjectClick }: ProjectCardProps) {
@@ -44,7 +32,7 @@ export default function ProjectCard({ project, onProjectClick }: ProjectCardProp
                     </div>
                 )}
                 <img
-                    src={storageUrl(project.image)}
+                    src={project.thumbnailUrl}
                     alt={project.title}
                     className={`w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setImageLoaded(true)}
@@ -59,7 +47,7 @@ export default function ProjectCard({ project, onProjectClick }: ProjectCardProp
             <h3 className="text-sm sm:text-xl font-bold font-['Jost'] mb-2">{project.title}</h3>
             <p className="font-['Jost'] text-sm sm:text-base text-[#010E26] mb-3 line-clamp-2">{project.description}</p>
             <p className="sm:text-2xl text-2xl text-blue-500 font-bold font-['Jost'] mb-4">
-                {project.view_percent}% <br />
+                {project.views}% <br />
                 <span className='text-[#010E26] text-xs font-light'>Website views after rebranding</span>
             </p>
         </div>

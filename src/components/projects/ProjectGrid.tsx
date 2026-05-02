@@ -2,21 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import Link from 'next/link';
-
-const storageUrl = (path: string) => {
-    if (!path) return '';
-    if (path.startsWith('http')) return path;
-    return `${(process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.landmark.ma').replace(/\/$/, '')}/storage/${path}`;
-};
-
-interface Project {
-    id: string | number;
-    title: string;
-    description: string;
-    image: string;
-    landing: string;
-    view_percent: number | string;
-}
+import type { Project } from '@/types/project';
 
 interface ProjectGridProps {
     projects: Project[];
@@ -59,7 +45,6 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
 
     const isLongDescription = (selectedProject?.description?.length ?? 0) > 150;
 
-    // Prevent background scroll and hide navbar when modal is open
     useEffect(() => {
         if (selectedProject) {
             document.body.style.overflow = 'hidden';
@@ -136,7 +121,7 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                 aria-label={`Voir les détails du projet ${project.title}`}
                             >
                                 <ImageWithPlaceholder
-                                    src={storageUrl(project.image)}
+                                    src={project.thumbnailUrl}
                                     alt={`Image du projet ${project.title}`}
                                     className="w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105"
                                 />
@@ -152,7 +137,7 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                 {project.description}
                             </p>
                             <p className="sm:text-2xl text-2xl text-blue-500 font-bold font-['Jost'] mb-4">
-                                {project.view_percent}% <br />
+                                {project.views}% <br />
                                 <span className="text-[#010E26] text-xs font-light w-[30%]">
                                     Website views after rebranding
                                 </span>
@@ -172,7 +157,7 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                     </Link>
                 </div>
 
-                {/* Project Modal */}
+                {/* Project Modal — shows landing image */}
                 {selectedProject && (
                     <div
                         className="fixed inset-0 backdrop-blur-sm bg-black/60 flex items-center justify-center z-50 overflow-y-auto"
@@ -233,19 +218,11 @@ const ProjectGrid = memo(({ projects }: ProjectGridProps) => {
                                         </div>
                                     )}
                                     <img
-                                        src={storageUrl(selectedProject.landing || selectedProject.image)}
+                                        src={selectedProject.landingUrl}
                                         alt={`Page d'accueil du projet ${selectedProject.title}`}
                                         className={`w-full h-auto mb-6 rounded-md transition-opacity duration-500 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                         onLoad={() => setModalImageLoaded(true)}
-                                        onError={(e) => {
-                                            const img = e.currentTarget;
-                                            const fallback = storageUrl(selectedProject.image);
-                                            if (img.src !== fallback) {
-                                                img.src = fallback;
-                                            } else {
-                                                setModalImageLoaded(true);
-                                            }
-                                        }}
+                                        onError={() => setModalImageLoaded(true)}
                                     />
                                 </div>
                             </div>

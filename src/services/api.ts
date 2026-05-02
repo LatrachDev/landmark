@@ -43,9 +43,9 @@ export const api = {
         getAll: () => fetch('/api/admin/projects').then(handleResponse),
         create: (formData: FormData) =>
             fetch('/api/admin/projects', { method: 'POST', body: formData }).then(handleResponse),
-        update: (id: number, formData: FormData) =>
+        update: (id: string, formData: FormData) =>
             fetch(`/api/admin/projects/${id}`, { method: 'PUT', body: formData }).then(handleResponse),
-        delete: (id: number) =>
+        delete: (id: string) =>
             fetch(`/api/admin/projects/${id}`, { method: 'DELETE' }).then(handleResponse),
     },
 
