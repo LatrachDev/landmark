@@ -1,6 +1,14 @@
 import { Metadata } from "next";
 import WebSiteBG from "@/assets/BG/maskBg.png";
 import BlogSwiper from "@/components/blog/BlogSwiper";
+import type { Blog, BlogCategory } from "@/types/blog";
+import { CATEGORY_LABELS } from "@/types/blog";
+
+const safeJsonLd = (obj: unknown) =>
+	JSON.stringify(obj)
+		.replace(/</g, "\\u003c")
+		.replace(/>/g, "\\u003e")
+		.replace(/&/g, "\\u0026");
 
 export const metadata: Metadata = {
 	title: "Blog Landmark - Conseils Marketing Digital & Branding Maroc",
@@ -8,9 +16,7 @@ export const metadata: Metadata = {
 		"Apprendre les meilleures stratégies marketing avec Landmark : conseils, astuces et tendances du marketing digital au Maroc. Découvrez nos articles sur le SEO, brand design et stratégies de communication.",
 	keywords:
 		"blog marketing digital maroc, conseils branding maroc, actualités marketing, tendances digitales maroc, stratégie contenu maroc, blog agence créative, Landmark blog",
-	alternates: {
-		canonical: "/blog",
-	},
+	alternates: { canonical: "/blog" },
 	openGraph: {
 		url: "https://landmark.ma/blog",
 		title: "Blog Landmark - Conseils Marketing Digital & Branding Maroc",
@@ -19,76 +25,30 @@ export const metadata: Metadata = {
 	},
 };
 
-interface Blog {
-	id: string | number;
-	title: string;
-	description: string;
-	image: string;
-	category: string;
-	created_at: string;
-}
+const API_URL = (process.env.API_URL || "http://localhost:5000").replace(/\/$/, "");
 
-interface BlogCategory {
-	category: string;
-	posts: Blog[];
-}
-
-async function getBlogData(): Promise<BlogCategory[]> {
+async function getBlogs(): Promise<Blog[]> {
 	try {
-		const apiBaseUrl =
-			process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma/";
-		const res = await fetch(`${apiBaseUrl}api/blog`, {
-			headers: {
-				Accept: "application/json",
-			},
-			next: { revalidate: 3600 }, // Revalidate every hour
+		const res = await fetch(`${API_URL}/api/blogs`, {
+			next: { revalidate: 3600 },
 		});
-
-		if (!res.ok) {
-			throw new Error("Failed to fetch blog data");
-		}
-
-		const data = await res.json();
-
-		if (data.blogs) {
-			// Group blogs by category
-			const groupedBlogs = data.blogs.reduce((acc: any, blog: any) => {
-				const category = blog.category;
-				if (!acc[category]) {
-					acc[category] = [];
-				}
-				acc[category].push({
-					...blog,
-					image: `https://api.Landmark.ma/storage/${blog.image}`,
-				});
-				return acc;
-			}, {});
-
-			// Convert to array format
-			const formattedData = Object.entries(groupedBlogs).map(
-				([category, posts]) => ({
-					category:
-						category === "CONTENT"
-							? "EN RELATION AVEC LA CRÉATION DE CONTENUE"
-							: `EN RELATION AVEC LE ${category}`,
-					posts: posts as Blog[],
-				}),
-			);
-
-			return formattedData;
-		}
-
-		return [];
-	} catch (error) {
-		console.error("Failed to fetch blog data:", error);
+		if (!res.ok) return [];
+		return res.json();
+	} catch {
 		return [];
 	}
 }
 
 export default async function BlogPage() {
-	const blogData = await getBlogData();
+	const blogs = await getBlogs();
 
-	const allPosts = blogData.flatMap((cat) => cat.posts);
+	const grouped = new Map<BlogCategory, Blog[]>();
+	for (const blog of blogs) {
+		const cat = blog.category as BlogCategory;
+		if (!grouped.has(cat)) grouped.set(cat, []);
+		grouped.get(cat)!.push(blog);
+	}
+
 	const blogListSchema = {
 		"@context": "https://schema.org",
 		"@type": "CollectionPage",
@@ -97,8 +57,8 @@ export default async function BlogPage() {
 		url: "https://landmark.ma/blog",
 		mainEntity: {
 			"@type": "ItemList",
-			numberOfItems: allPosts.length,
-			itemListElement: allPosts.map((post, index) => ({
+			numberOfItems: blogs.length,
+			itemListElement: blogs.map((post, index) => ({
 				"@type": "ListItem",
 				position: index + 1,
 				url: `https://landmark.ma/blog/${post.id}`,
@@ -111,8 +71,9 @@ export default async function BlogPage() {
 		<div className="font-jost relative min-h-screen w-full overflow-x-hidden bg-white">
 			<script
 				type="application/ld+json"
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(blogListSchema) }}
+				dangerouslySetInnerHTML={{ __html: safeJsonLd(blogListSchema) }}
 			/>
+
 			{/* Background */}
 			<div
 				className="absolute top-0 left-0 w-full bg-cover bg-no-repeat"
@@ -131,7 +92,6 @@ export default async function BlogPage() {
 					Découvrez tous nos contenus en un seul endroit.
 				</p>
 
-				{/* Blog Sections */}
 				<div className="pb-8 md:pb-16">
 					<div className="space-y-16 md:space-y-24">
 						<div>
@@ -141,17 +101,16 @@ export default async function BlogPage() {
 							</h2>
 						</div>
 
-						{blogData.length > 0 ? (
-							blogData.map((category, index) => (
-								<div key={index} className="space-y-8 md:space-y-10">
+						{grouped.size > 0 ? (
+							Array.from(grouped.entries()).map(([category, posts]) => (
+								<div key={category} className="space-y-8 md:space-y-10">
 									<div className="flex items-center gap-6">
 										<h2 className="text-xl sm:text-2xl md:text-3xl text-[#010E26] uppercase text-left font-bold tracking-tight leading-tight font-bodoni">
-											{category.category}
+											{CATEGORY_LABELS[category]}
 										</h2>
-										<div className="h-[1px] bg-linear-to-r from-gray-300 to-transparent grow"></div>
+										<div className="h-px bg-linear-to-r from-gray-300 to-transparent grow"></div>
 									</div>
-
-									<BlogSwiper posts={category.posts} />
+									<BlogSwiper posts={posts} />
 								</div>
 							))
 						) : (

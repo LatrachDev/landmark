@@ -1,21 +1,22 @@
 import BlogClient from "./BlogClient";
-import { api } from "@/services/api";
+import type { Blog } from "@/types/blog";
 
-async function getBlogs() {
+const API_URL = (process.env.API_URL || "http://localhost:5000").replace(/\/$/, "");
+
+async function getBlogs(): Promise<Blog[]> {
 	try {
-		const data = await api.home.getBlogs({
+		const res = await fetch(`${API_URL}/api/blogs`, {
 			next: { revalidate: 3600 },
 		});
-		return data.blogs || [];
-	} catch (error) {
-		console.error("Error fetching blogs on server:", error);
+		if (!res.ok) return [];
+		return res.json();
+	} catch {
 		return [];
 	}
 }
 
 const Blog = async ({ hideHeader = false }: { hideHeader?: boolean }) => {
 	const blogs = await getBlogs();
-
 	return <BlogClient blogs={blogs} hideHeader={hideHeader} />;
 };
 

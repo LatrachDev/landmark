@@ -2,41 +2,23 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 import Link from "next/link";
 import BlogCard from "./BlogCard";
-
-// Import Swiper styles
-// import 'swiper/css';
-// import 'swiper/css/navigation';
-
-interface BlogPost {
-	id: string | number;
-	title: string;
-	description: string;
-	image: string;
-	created_at?: string;
-	category?: string;
-}
+import type { Blog } from "@/types/blog";
 
 interface BlogClientProps {
-	blogs: BlogPost[];
+	blogs: Blog[];
 	hideHeader?: boolean;
 }
 
+const truncateText = (text: string, maxLength = 100) => {
+	if (!text) return "";
+	return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+};
+
 const BlogClient = ({ blogs, hideHeader = false }: BlogClientProps) => {
-	const baseURL = "https://api.Landmark.ma/storage/";
-
-	const truncateText = (text: string, maxLength = 100) => {
-		if (!text) return "";
-		return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-	};
-
-	const formattedBlogs = blogs.map((blog) => ({
-		...blog,
-		// Ensure image path is fully qualified for BlogCard
-		image: blog.image.startsWith("http") ? blog.image : baseURL + blog.image,
-	}));
-
 	return (
 		<section
 			className={`${hideHeader ? "py-4 px-0" : "py-20 px-4 sm:px-10 md:px-20 lg:px-28"} bg-white overflow-hidden relative w-full`}
@@ -80,10 +62,6 @@ const BlogClient = ({ blogs, hideHeader = false }: BlogClientProps) => {
 				)}
 
 				<div className="relative">
-					{/* Fading gradients */}
-					{/* <div className="absolute top-0 bottom-0 left-[-2px] w-12 sm:w-24 md:w-48 z-10 bg-linear-to-r from-white to-transparent pointer-events-none" /> */}
-					{/* <div className="absolute top-0 bottom-0 right-[-2px] w-12 sm:w-24 md:w-48 z-10 bg-gradient-to-l from-white to-transparent pointer-events-none" />  */}
-
 					<Swiper
 						modules={[Navigation]}
 						navigation={true}
@@ -94,14 +72,11 @@ const BlogClient = ({ blogs, hideHeader = false }: BlogClientProps) => {
 							1024: { slidesPerView: 2.2, spaceBetween: 30 },
 							1280: { slidesPerView: 2.5, spaceBetween: 35 },
 						}}
-						className="overflow-hidden"
+						className="overflow-hidden flex"
 					>
-						{formattedBlogs.map((post) => (
-							<SwiperSlide
-								key={post.id}
-								className="pb-12 font-jost h-auto flex"
-							>
-								<BlogCard post={post} truncateDescription={truncateText} />
+						{blogs.map((post) => (
+							<SwiperSlide key={post.id} className="pb-12 font-jost h-auto flex">
+								<BlogCard post={post} truncateText={truncateText} />
 							</SwiperSlide>
 						))}
 					</Swiper>

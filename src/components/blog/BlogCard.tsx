@@ -2,22 +2,15 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import type { Blog } from "@/types/blog";
 
 interface BlogCardProps {
-	post: {
-		id: string | number;
-		title: string;
-		description: string;
-		image: string;
-		created_at?: string;
-		category?: string;
-	};
-	truncateDescription: (text: string, maxLength?: number) => string;
+	post: Blog;
+	truncateText: (text: string, maxLength?: number) => string;
 }
 
-const BlogCard = ({ post, truncateDescription }: BlogCardProps) => {
+const BlogCard = ({ post, truncateText }: BlogCardProps) => {
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
@@ -36,28 +29,24 @@ const BlogCard = ({ post, truncateDescription }: BlogCardProps) => {
 						{post.category}
 					</span>
 				)}
-				<Image
-					src={post.image}
+				<img
+					src={post.imageUrl}
 					alt={post.title}
-					fill
-					sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-					className="object-cover rounded-xl transition-transform duration-500 group-hover:scale-110"
+					className="absolute inset-0 w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-110"
 				/>
 			</Link>
 
 			<div className="grow p-3">
-				{post.created_at && (
-					<div className="text-[9px] text-gray-400 mb-1.5 font-medium uppercase tracking-widest">
-						{new Date(post.created_at).toLocaleDateString()}
-					</div>
-				)}
+				<div className="text-[9px] text-gray-400 mb-1.5 font-medium uppercase tracking-widest">
+					{new Date(post.createdAt).toLocaleDateString()}
+				</div>
 				<Link href={`/blog/${post.id}`} className="block">
 					<h3 className="text-lg md:text-xl font-bold mb-2 text-[#010E26] group-hover:text-[#445EF2] transition-colors leading-tight line-clamp-2">
 						{post.title}
 					</h3>
 				</Link>
 				<p className="text-gray-500 text-xs sm:text-sm mb-4 line-clamp-3 leading-relaxed">
-					{truncateDescription(post.description, 120)}
+					{truncateText(post.content, 120)}
 				</p>
 				<Link
 					href={`/blog/${post.id}`}
