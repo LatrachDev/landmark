@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 async function getServices(): Promise<Service[]> {
-	const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
+	const apiUrl = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 		/\/$/,
 		"",
 	);

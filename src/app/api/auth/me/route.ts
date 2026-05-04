@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
-	/\/$/,
-	"",
-);
+const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 export async function GET(request: NextRequest) {
 	const token = request.cookies.get("admin_token")?.value;

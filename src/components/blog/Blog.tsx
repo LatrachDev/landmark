@@ -1,14 +1,14 @@
 import BlogClient from "./BlogClient";
 import type { Blog } from "@/types/blog";
 
-const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 	/\/$/,
 	"",
 );
 
 async function getBlogs(): Promise<Blog[]> {
 	try {
-		const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/blogs`, {
+		const res = await fetch(`${NEXT_PUBLIC_NEXT_PUBLIC_API_URL}/api/blogs`, {
 			next: { revalidate: 3600 },
 		});
 		if (!res.ok) return [];
