@@ -2,32 +2,36 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BlogDetailPageClient from "./BlogDetailPageClient";
 import Blog from "@/components/blog/Blog";
+import type { Blog as BlogType } from "@/types/blog";
 
 type Props = {
 	params: Promise<{ id: string }>;
 };
 
-const apiBaseUrl = (
-	process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma/"
-).replace(/\/$/, "");
+const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+	/\/$/,
+	"",
+);
 
-function truncateDescription(text: string, maxLength = 155) {
+const safeJsonLd = (obj: unknown) =>
+	JSON.stringify(obj)
+		.replace(/</g, "\\u003c")
+		.replace(/>/g, "\\u003e")
+		.replace(/&/g, "\\u0026");
+
+function truncate(text: string, maxLength = 155) {
 	if (!text) return "";
 	if (text.length <= maxLength) return text;
 	return text.substring(0, maxLength).split(" ").slice(0, -1).join(" ") + "...";
 }
 
-async function getBlog(id: string) {
+async function getBlog(id: string): Promise<BlogType | null> {
 	try {
-		const res = await fetch(`${apiBaseUrl}/api/blog/${id}`, {
+		const res = await fetch(`${API_URL}/api/blogs/${id}`, {
 			next: { revalidate: 3600 },
 		});
 		if (!res.ok) return null;
-		const data = await res.json();
-		return {
-			...data,
-			image: `https://api.Landmark.ma/storage/${data.image}`,
-		};
+		return res.json();
 	} catch {
 		return null;
 	}
@@ -35,13 +39,10 @@ async function getBlog(id: string) {
 
 export async function generateStaticParams() {
 	try {
-		const res = await fetch(`${apiBaseUrl}/api/blog`);
-		const data = await res.json();
-		return (
-			data.blogs?.map((blog: any) => ({
-				id: String(blog.id),
-			})) || []
-		);
+		const res = await fetch(`${API_URL}/api/blogs`);
+		if (!res.ok) return [];
+		const blogs: BlogType[] = await res.json();
+		return blogs.map((b) => ({ id: b.id }));
 	} catch {
 		return [];
 	}
@@ -59,22 +60,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 		};
 	}
 
-	const description = truncateDescription(blog.description);
+	const description = truncate(blog.content);
 
 	return {
 		title: `${blog.title} | Landmark Agency`,
 		description,
 		keywords: `${blog.category}, marketing digital maroc, blog landmark, ${blog.title}`,
-		alternates: {
-			canonical: `/blog/${id}`,
-		},
+		alternates: { canonical: `/blog/${id}` },
 		openGraph: {
 			type: "article",
 			url: `https://landmark.ma/blog/${id}`,
 			title: blog.title,
 			description,
-			images: [blog.image],
-			publishedTime: blog.created_at,
+			images: [blog.imageUrl],
+			publishedTime: blog.createdAt,
 		},
 	};
 }
@@ -83,20 +82,15 @@ export default async function BlogDetailPage({ params }: Props) {
 	const { id } = await params;
 	const blog = await getBlog(id);
 
-	if (!blog) {
-		notFound();
-	}
+	if (!blog) notFound();
 
 	const articleSchema = {
 		"@context": "https://schema.org",
 		"@type": "BlogPosting",
 		headline: blog.title,
-		image: blog.image,
-		datePublished: blog.created_at,
-		author: {
-			"@type": "Organization",
-			name: "Landmark Agency",
-		},
+		image: blog.imageUrl,
+		datePublished: blog.createdAt,
+		author: { "@type": "Organization", name: "Landmark Agency" },
 		publisher: {
 			"@type": "Organization",
 			name: "Landmark Agency",
@@ -105,7 +99,7 @@ export default async function BlogDetailPage({ params }: Props) {
 				url: "https://landmark.ma/assets/Logotype/White.png",
 			},
 		},
-		description: truncateDescription(blog.description),
+		description: truncate(blog.content),
 	};
 
 	const breadcrumbSchema = {
@@ -124,11 +118,7 @@ export default async function BlogDetailPage({ params }: Props) {
 				name: "Blog",
 				item: "https://landmark.ma/blog",
 			},
-			{
-				"@type": "ListItem",
-				position: 3,
-				name: blog.title,
-			},
+			{ "@type": "ListItem", position: 3, name: blog.title },
 		],
 	};
 
@@ -136,11 +126,11 @@ export default async function BlogDetailPage({ params }: Props) {
 		<>
 			<script
 				type="application/ld+json"
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+				dangerouslySetInnerHTML={{ __html: safeJsonLd(articleSchema) }}
 			/>
 			<script
 				type="application/ld+json"
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+				dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
 			/>
 			<BlogDetailPageClient blog={blog}>
 				<Blog hideHeader={true} />

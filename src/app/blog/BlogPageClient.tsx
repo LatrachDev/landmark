@@ -9,64 +9,54 @@ import WebSiteBG from "@/assets/BG/maskBg.png";
 
 import { BlogSkeleton } from "@/components/blog/BlogSkeleton";
 import BlogCard from "@/components/blog/BlogCard";
+import type { Blog, BlogCategory } from "@/types/blog";
+import { CATEGORY_LABELS } from "@/types/blog";
+
+interface CategoryGroup {
+	category: string;
+	posts: Blog[];
+}
 
 export default function BlogPageClient() {
-	const [blogData, setBlogData] = useState<any[]>([]);
+	const [blogData, setBlogData] = useState<CategoryGroup[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const apiBaseUrl =
-			process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma/";
-		fetch(`${apiBaseUrl}api/blog`, {
-			headers: {
-				Accept: "application/json",
-			},
+		const apiBaseUrl = (
+			process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma"
+		).replace(/\/$/, "");
+
+		fetch(`${apiBaseUrl}/api/blogs`, {
+			headers: { Accept: "application/json" },
 		})
 			.then((res) => {
 				if (!res.ok) throw new Error("Network response was not ok");
 				return res.json();
 			})
-			.then((data) => {
-				if (data.blogs) {
-					// Group blogs by category
-					const groupedBlogs = data.blogs.reduce((acc: any, blog: any) => {
-						const category = blog.category;
-						if (!acc[category]) {
-							acc[category] = [];
-						}
-						acc[category].push({
-							...blog,
-							image: `https://api.Landmark.ma/storage/${blog.image}`,
-						});
-						return acc;
-					}, {});
+			.then((blogs: Blog[]) => {
+				const grouped = blogs.reduce<Record<string, Blog[]>>((acc, blog) => {
+					const cat = blog.category;
+					if (!acc[cat]) acc[cat] = [];
+					acc[cat].push(blog);
+					return acc;
+				}, {});
 
-					// Convert to array format matching your original structure
-					const formattedData = Object.entries(groupedBlogs).map(
-						([category, posts]) => ({
-							category:
-								category === "CONTENT"
-									? "EN RELATION AVEC LA CRÉATION DE CONTENUE"
-									: `EN RELATION AVEC LE ${category}`,
-							posts: posts as any[],
-						}),
-					);
+				const formattedData = Object.entries(grouped).map(([cat, posts]) => ({
+					category: CATEGORY_LABELS[cat as BlogCategory] || cat,
+					posts,
+				}));
 
-					setBlogData(formattedData);
-				}
-				setIsLoading(false);
+				setBlogData(formattedData);
 			})
 			.catch((error) => {
 				console.error("Failed to fetch blog data:", error);
-				setIsLoading(false);
-			});
+			})
+			.finally(() => setIsLoading(false));
 	}, []);
 
-	// Function to truncate description
-	const truncateDescription = (text: string, maxLength = 100) => {
+	const truncateText = (text: string, maxLength = 100) => {
 		if (!text) return "";
-		if (text.length <= maxLength) return text;
-		return text.substring(0, maxLength) + "...";
+		return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 	};
 
 	return (
@@ -83,13 +73,12 @@ export default function BlogPageClient() {
 
 			<section className="text-left py-16 px-4 sm:px-10 w-[90%] m-auto relative z-10">
 				<h1 className="sm:mt-24 mt-5 text-[#010e26] text-xl sm:text-2xl md:text-4xl font-bold uppercase tracking-wide mb-4 md:mb-6">
-					Besoin d'inspiration ?
+					Besoin d&apos;inspiration ?
 				</h1>
 				<p className="text-[#010e26] uppercase mb-10 md:mb-20 text-sm md:text-xl tracking-normal">
 					Découvrez tous nos contenus en un seul endroit.
 				</p>
 
-				{/* Blog Sections */}
 				<div className="pb-8 md:pb-16">
 					<div className="space-y-16 md:space-y-24">
 						<div>
@@ -102,13 +91,13 @@ export default function BlogPageClient() {
 						{isLoading ? (
 							<BlogSkeleton />
 						) : blogData.length > 0 ? (
-							blogData.map((category, index) => (
+							blogData.map((group, index) => (
 								<div key={index} className="space-y-8 md:space-y-10">
 									<div className="flex items-center gap-6">
 										<h2 className="text-xl sm:text-2xl md:text-3xl text-[#010E26] uppercase text-left font-bold tracking-tight leading-tight font-bodoni">
-											{category.category}
+											{group.category}
 										</h2>
-										<div className="h-[1px] bg-linear-to-r from-gray-300 to-transparent grow"></div>
+										<div className="h-px bg-linear-to-r from-gray-300 to-transparent grow"></div>
 									</div>
 
 									<Swiper
@@ -121,14 +110,11 @@ export default function BlogPageClient() {
 											1024: { slidesPerView: 3 },
 										}}
 										navigation
-										className="!overflow-visible"
+										className="overflow-visible!"
 									>
-										{category.posts.map((post: any) => (
+										{group.posts.map((post) => (
 											<SwiperSlide key={post.id} className="pb-10">
-												<BlogCard
-													post={post}
-													truncateDescription={truncateDescription}
-												/>
+												<BlogCard post={post} truncateText={truncateText} />
 											</SwiperSlide>
 										))}
 									</Swiper>

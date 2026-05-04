@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,8 +8,9 @@ import mainLogo from "@/assets/logotype/main.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { api } from "@/services/api";
+import type { Blog, BlogCategory } from "@/types/blog";
+import { CATEGORY_LABELS } from "@/types/blog";
 
-// Route constants
 const ADMIN_TEAM = "/admin/team";
 const ADMIN_INBOX = "/admin/inbox";
 const ADMIN_PROJECTS = "/admin/projects";
@@ -17,26 +18,34 @@ const ADMIN_BLOG = "/admin/blog";
 const ADMIN_CONTENT = "/admin/content";
 const ADMIN_SERVICES = "/admin/services";
 
+const CATEGORIES: BlogCategory[] = ["MARKETING", "BRANDING", "CONTENT"];
+
+interface FormState {
+	title: string;
+	content: string;
+	category: BlogCategory | "";
+	image: File | null;
+}
+
+const emptyForm = (): FormState => ({
+	title: "",
+	content: "",
+	category: "",
+	image: null,
+});
+
 export default function BlogManagementPage() {
-	const [blogs, setBlogs] = useState<any>([]);
+	const [blogs, setBlogs] = useState<Blog[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [showUpdateForm, setShowUpdateForm] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
-	const [blogToDelete, setBlogToDelete] = useState<any>(null);
-	const [blogToEdit, setBlogToEdit] = useState<any>(null);
+	const [blogToDelete, setBlogToDelete] = useState<Blog | null>(null);
+	const [blogToEdit, setBlogToEdit] = useState<Blog | null>(null);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [errors, setErrors] = useState<any>({});
-
-	const CATEGORIES = ["MARKETING", "BRANDING", "CONTENT"] as const;
-
-	const [formData, setFormData] = useState<any>({
-		title: "",
-		description: "",
-		image: null,
-		category: "",
-	});
+	const [errors, setErrors] = useState<string[]>([]);
+	const [formData, setFormData] = useState<FormState>(emptyForm());
 
 	const router = useRouter();
 
@@ -49,7 +58,7 @@ export default function BlogManagementPage() {
 		setIsLoading(true);
 		try {
 			const data = await api.blog.getAll();
-			setBlogs(data);
+			setBlogs(Array.isArray(data) ? data : []);
 		} catch (err) {
 			console.error("Error fetching blogs:", err);
 		} finally {
@@ -57,7 +66,7 @@ export default function BlogManagementPage() {
 		}
 	};
 
-	const handleDeleteClick = (blog: any) => {
+	const handleDeleteClick = (blog: Blog) => {
 		setBlogToDelete(blog);
 		setShowDeleteModal(true);
 	};
@@ -67,65 +76,75 @@ export default function BlogManagementPage() {
 		setIsDeleting(true);
 		try {
 			await api.blog.delete(blogToDelete.id);
+			toast.success("Article supprimé avec succès");
 			fetchBlogs();
 			setShowDeleteModal(false);
-			toast.success("Article supprimé avec succès");
-		} catch (err: any) {
-			console.error("Delete error:", err);
-			toast.error(err.message || "Erreur lors de la suppression");
+			setBlogToDelete(null);
+		} catch (err: unknown) {
+			const msg = err instanceof Error ? err.message : "Suppression échouée";
+			toast.error(msg);
 		} finally {
 			setIsDeleting(false);
 		}
 	};
 
 	const handleCreateClick = () => {
-		setFormData({ title: "", description: "", image: null, category: "" });
-		setErrors({});
+		setFormData(emptyForm());
+		setErrors([]);
 		setShowCreateForm(true);
 		setShowUpdateForm(false);
 	};
 
-	const handleEditClick = (blog: any) => {
+	const handleEditClick = (blog: Blog) => {
 		setBlogToEdit(blog);
 		setFormData({
 			title: blog.title,
-			description: blog.description,
+			content: blog.content,
+			category: blog.category,
 			image: null,
-			category: blog.category || "",
 		});
-		setErrors({});
+		setErrors([]);
 		setShowUpdateForm(true);
 		setShowCreateForm(false);
 	};
 
-	const handleInputChange = (e: any) => {
-		const { name, value, type, files } = e.target;
+	const handleInputChange = (
+		e: React.ChangeEvent<
+			HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+		>,
+	) => {
+		const target = e.target as HTMLInputElement;
+		const { name, type } = target;
 		if (type === "file") {
-			setFormData((prev: any) => ({ ...prev, [name]: files[0] }));
+			setFormData((prev) => ({ ...prev, [name]: target.files?.[0] ?? null }));
 		} else {
-			setFormData((prev: any) => ({ ...prev, [name]: value }));
+			setFormData((prev) => ({ ...prev, [name]: target.value }));
 		}
+	};
+
+	const buildFormData = (): FormData => {
+		const fd = new FormData();
+		fd.append("title", formData.title);
+		fd.append("content", formData.content);
+		fd.append("category", formData.category);
+		if (formData.image) fd.append("image", formData.image);
+		return fd;
 	};
 
 	const handleCreateSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
+		setErrors([]);
 		try {
-			const formDataToSend = new FormData();
-			formDataToSend.append("title", formData.title);
-			formDataToSend.append("description", formData.description);
-			formDataToSend.append("category", formData.category);
-			if (formData.image) formDataToSend.append("image", formData.image);
-
-			await api.blog.create(formDataToSend);
-
+			await api.blog.create(buildFormData());
+			setFormData(emptyForm());
 			fetchBlogs();
 			setShowCreateForm(false);
 			toast.success("Article publié avec succès");
-		} catch (err: any) {
-			console.error("Create error:", err);
-			if (err.errors) setErrors(err.errors);
-			toast.error(err.message || "Échec de la publication");
+		} catch (err: unknown) {
+			const body = err as { errors?: string[]; message?: string };
+			if (body?.errors) setErrors(body.errors);
+			else toast.error(body?.message || "Création échouée");
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -135,23 +154,18 @@ export default function BlogManagementPage() {
 		e.preventDefault();
 		if (!blogToEdit) return;
 		setIsSubmitting(true);
+		setErrors([]);
 		try {
-			const formDataToSend = new FormData();
-			formDataToSend.append("title", formData.title);
-			formDataToSend.append("description", formData.description);
-			formDataToSend.append("category", formData.category);
-			formDataToSend.append("_method", "PUT");
-			if (formData.image) formDataToSend.append("image", formData.image);
-
-			await api.blog.update(blogToEdit.id, formDataToSend);
-
+			await api.blog.update(blogToEdit.id, buildFormData());
+			setFormData(emptyForm());
 			fetchBlogs();
 			setShowUpdateForm(false);
+			setBlogToEdit(null);
 			toast.success("Article mis à jour");
-		} catch (err: any) {
-			console.error("Update error:", err);
-			if (err.errors) setErrors(err.errors);
-			toast.error(err.message || "Échec de la mise à jour");
+		} catch (err: unknown) {
+			const body = err as { errors?: string[]; message?: string };
+			if (body?.errors) setErrors(body.errors);
+			else toast.error(body?.message || "Mise à jour échouée");
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -162,8 +176,6 @@ export default function BlogManagementPage() {
 		router.push("/");
 	};
 
-	const navigateTo = (path: string) => router.push(path);
-
 	const adminCards = [
 		{ title: "Équipe", icon: "👥", path: ADMIN_TEAM },
 		{ title: "Projets", icon: "📁", path: ADMIN_PROJECTS },
@@ -173,12 +185,9 @@ export default function BlogManagementPage() {
 		{ title: "Services", icon: "🛠️", path: ADMIN_SERVICES },
 	];
 
-	// Helper to handle inconsistent API data structure (Array vs Object with data key)
-	const blogList = Array.isArray(blogs) ? blogs : blogs?.data || [];
-
 	return (
 		<div className="font-jost bg-[#fcfdfe] min-h-screen pb-20 overflow-x-hidden">
-			{/* Navigtaion Bar */}
+			{/* Navigation Bar */}
 			<nav className="bg-white border-b border-gray-100 sticky top-0 z-30 h-24 flex items-center">
 				<div className="max-w-7xl mx-auto px-6 lg:px-10 w-full flex justify-between items-center">
 					<Link href="/admin">
@@ -204,10 +213,11 @@ export default function BlogManagementPage() {
 					{adminCards.map((card, idx) => (
 						<button
 							key={idx}
-							onClick={() => navigateTo(card.path)}
+							onClick={() => router.push(card.path)}
 							className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${card.active ? "bg-[#010E26] text-white shadow-xl shadow-[#010E26]/20" : "bg-white text-gray-400 border border-gray-100 hover:border-[#445EF2] hover:text-[#445EF2]"}`}
 						>
-							<span className="mr-2">{card.icon}</span> {card.title}
+							<span className="mr-2">{card.icon}</span>
+							{card.title}
 						</button>
 					))}
 				</div>
@@ -242,7 +252,7 @@ export default function BlogManagementPage() {
 					</button>
 				</div>
 
-				{/* Forms Section */}
+				{/* Form Section */}
 				<AnimatePresence mode="wait">
 					{(showCreateForm || showUpdateForm) && (
 						<motion.div
@@ -257,8 +267,22 @@ export default function BlogManagementPage() {
 								<h2 className="text-2xl font-black text-[#010E26] uppercase mb-8">
 									{showCreateForm
 										? "Écrire un nouvel article"
-										: `Modifier: ${blogToEdit?.title}`}
+										: `Modifier : ${blogToEdit?.title}`}
 								</h2>
+
+								{errors.length > 0 && (
+									<ul className="mb-6 bg-red-50 border border-red-100 rounded-2xl p-4 space-y-1">
+										{errors.map((err, i) => (
+											<li
+												key={i}
+												className="text-red-600 text-[11px] font-bold uppercase tracking-wider"
+											>
+												{err}
+											</li>
+										))}
+									</ul>
+								)}
+
 								<form
 									onSubmit={
 										showCreateForm ? handleCreateSubmit : handleUpdateSubmit
@@ -277,30 +301,39 @@ export default function BlogManagementPage() {
 											required
 											className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all"
 										/>
-										{errors.title && (
-											<p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">
-												{errors.title[0]}
-											</p>
-										)}
 									</div>
+
 									<div className="md:col-span-2 space-y-2">
 										<label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">
-											Contenu / Description *
+											Contenu *
 										</label>
 										<textarea
-											name="description"
-											value={formData.description}
+											name="content"
+											value={formData.content}
 											onChange={handleInputChange}
 											required
-											rows={6}
-											className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all"
+											rows={10}
+											className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all resize-y font-mono text-sm"
 										/>
-										{errors.description && (
-											<p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">
-												{errors.description[0]}
-											</p>
-										)}
+										<p className="text-[10px] text-gray-400 font-medium ml-1 leading-relaxed">
+											Formatage du contenu —{" "}
+											<span className="font-black text-gray-500"># Titre</span>{" "}
+											·{" "}
+											<span className="font-black text-gray-500">
+												1. Rubrique
+											</span>{" "}
+											·{" "}
+											<span className="font-black text-gray-500">
+												1.2 Sous-rubrique
+											</span>{" "}
+											·{" "}
+											<span className="font-black text-gray-500">- Point</span>{" "}
+											ou{" "}
+											<span className="font-black text-gray-500">* Point</span>{" "}
+											· Texte simple → paragraphe
+										</p>
 									</div>
+
 									<div className="space-y-2">
 										<label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">
 											Catégorie *
@@ -317,29 +350,41 @@ export default function BlogManagementPage() {
 											</option>
 											{CATEGORIES.map((cat) => (
 												<option key={cat} value={cat}>
-													{cat}
+													{CATEGORY_LABELS[cat]}
 												</option>
 											))}
 										</select>
-										{errors.category && (
-											<p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">
-												{errors.category[0]}
-											</p>
-										)}
 									</div>
-									<div className="md:col-span-2 space-y-2">
+
+									<div className="space-y-2">
 										<label className="text-[#010E26] text-[10px] font-black uppercase tracking-[0.2em] ml-1">
-											Image de couverture {showCreateForm ? "*" : "(optionnel)"}
+											Image de couverture{" "}
+											{showCreateForm
+												? "*"
+												: "(optionnel — laissez vide pour conserver l'actuelle)"}
 										</label>
+										{blogToEdit && showUpdateForm && !formData.image && (
+											<div className="mb-3">
+												<p className="text-gray-400 text-[10px] uppercase font-bold mb-2">
+													Image actuelle :
+												</p>
+												<img
+													src={blogToEdit.imageUrl}
+													className="h-16 w-28 object-cover rounded-xl border border-gray-100"
+													alt="current"
+												/>
+											</div>
+										)}
 										<input
 											type="file"
 											name="image"
 											onChange={handleInputChange}
-											accept="image/*"
+											accept="image/jpeg,image/png,image/webp,image/gif"
 											required={showCreateForm}
 											className="w-full p-4 rounded-2xl bg-white border border-transparent focus:border-[#445EF2] outline-none shadow-sm transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-gray-100 file:text-[#010E26] hover:file:bg-[#445EF2] hover:file:text-white file:transition-all"
 										/>
 									</div>
+
 									<div className="md:col-span-2 flex gap-4 pt-4">
 										<button
 											disabled={isSubmitting}
@@ -347,7 +392,7 @@ export default function BlogManagementPage() {
 											className="flex-1 bg-[#445EF2] text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#010E26] transition-all disabled:opacity-50"
 										>
 											{isSubmitting
-												? "Publication en cours..."
+												? "Enregistrement..."
 												: showCreateForm
 													? "Publier l'article"
 													: "Enregistrer les modifications"}
@@ -369,125 +414,93 @@ export default function BlogManagementPage() {
 					)}
 				</AnimatePresence>
 
-				{/* Grid display with robust list handling */}
+				{/* Blog Grid */}
 				{isLoading ? (
 					<div className="flex flex-col items-center justify-center py-32">
 						<div className="w-12 h-12 border-4 border-gray-100 border-t-[#445EF2] rounded-full animate-spin mb-6"></div>
 						<p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-xs">
-							Périscope sur le blog...
+							Chargement des articles...
+						</p>
+					</div>
+				) : blogs.length === 0 ? (
+					<div className="py-20 text-center">
+						<p className="text-gray-300 font-black uppercase tracking-[0.3em] text-[10px]">
+							Aucun article publié
 						</p>
 					</div>
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-						{blogList && blogList.length > 0 ? (
-							blogList.map((blog: any) => (
-								<motion.div
-									layout
-									key={blog.id}
-									className="group bg-white rounded-[2.5rem] p-6 border border-gray-50 shadow-sm hover:shadow-2xl transition-all h-full flex flex-col"
-								>
-									<div className="relative aspect-video rounded-4xl overflow-hidden mb-6 bg-gray-100">
-										<img
-											src={`https://api.Landmark.ma/storage/${blog.image}`}
-											alt={blog.title}
-											className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-										/>
-										<div className="absolute top-4 right-4 flex flex-col gap-2 transform translate-x-12 group-hover:translate-x-0 transition-transform duration-500">
-											<button
-												onClick={() => handleEditClick(blog)}
-												className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-[#010E26] hover:bg-[#445EF2] hover:text-white transition-all"
+						{blogs.map((blog) => (
+							<motion.div
+								layout
+								key={blog.id}
+								className="group bg-white rounded-[2.5rem] p-6 border border-gray-50 shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.05)] transition-all flex flex-col h-full"
+							>
+								<div className="relative aspect-video w-full rounded-[2rem] overflow-hidden mb-6 bg-gray-100">
+									<img
+										src={blog.imageUrl}
+										alt={blog.title}
+										className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+									/>
+									<div className="absolute top-4 right-4 flex flex-col gap-2 transform translate-x-12 group-hover:translate-x-0 transition-transform duration-500">
+										<button
+											onClick={() => handleEditClick(blog)}
+											className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-[#010E26] hover:bg-[#445EF2] hover:text-white transition-all"
+										>
+											<svg
+												className="w-4 h-4"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
 											>
-												<svg
-													className="w-4 h-4"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth={2}
-														d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
-													/>
-												</svg>
-											</button>
-											<button
-												onClick={() => handleDeleteClick(blog)}
-												className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all"
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth={2}
+													d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
+												/>
+											</svg>
+										</button>
+										<button
+											onClick={() => handleDeleteClick(blog)}
+											className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all"
+										>
+											<svg
+												className="w-4 h-4"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
 											>
-												<svg
-													className="w-4 h-4"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth={2}
-														d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-													/>
-												</svg>
-											</button>
-										</div>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth={2}
+													d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+												/>
+											</svg>
+										</button>
 									</div>
-									<h3 className="text-xl font-bold text-[#010E26] uppercase line-clamp-2 leading-tight mb-4">
+								</div>
+								<div className="flex-grow">
+									<span className="text-[#445EF2] font-black uppercase text-[10px] tracking-[0.2em] mb-1 block">
+										{CATEGORY_LABELS[blog.category]}
+									</span>
+									<h3 className="text-xl font-bold text-[#010E26] uppercase line-clamp-2 leading-tight mb-3">
 										{blog.title}
 									</h3>
-									<p className="text-gray-500 text-sm font-medium line-clamp-3 leading-relaxed mb-6">
-										{blog.description}
+									<p className="text-gray-500 text-sm font-medium line-clamp-2 leading-relaxed mb-6">
+										{blog.content}
 									</p>
-									<div className="flex items-center gap-2 mt-auto pt-4 text-gray-400 text-[10px] font-black uppercase tracking-widest border-t border-gray-50">
-										{blog.category && (
-											<span className="px-2 py-1 bg-[#445EF2]/10 text-[#445EF2] rounded-lg text-[9px] font-black tracking-widest">
-												{blog.category}
-											</span>
-										)}
-										<span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-										<span>
-											{blog.created_at
-												? new Date(blog.created_at).toLocaleDateString()
-												: "Date inconnue"}
-										</span>
-										<span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-										<span>Par Landmark</span>
-									</div>
-								</motion.div>
-							))
-						) : (
-							<div className="col-span-full py-20 text-center flex flex-col items-center">
-								<div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-6">
-									<svg
-										className="w-10 h-10"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={1.5}
-											d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"
-										/>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={1.5}
-											d="M14 2v6h6"
-										/>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={1.5}
-											d="M8 13h4m-4 4h6"
-										/>
-									</svg>
 								</div>
-								<p className="text-gray-300 font-black uppercase tracking-[0.3em] text-[10px]">
-									Aucun article publié
-								</p>
-							</div>
-						)}
+								<div className="flex items-center gap-2 pt-4 border-t border-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+									<span>
+										{new Date(blog.createdAt).toLocaleDateString("fr-FR")}
+									</span>
+									<span className="w-1 h-1 bg-gray-200 rounded-full"></span>
+									<span>Par Landmark</span>
+								</div>
+							</motion.div>
+						))}
 					</div>
 				)}
 			</div>
@@ -529,14 +542,15 @@ export default function BlogManagementPage() {
 							<div className="grid grid-cols-2 gap-4">
 								<button
 									onClick={() => setShowDeleteModal(false)}
-									className="px-6 py-4 bg-gray-50 text-gray-400 rounded-2xl font-black uppercase tracking-widest text-[10px]"
+									disabled={isDeleting}
+									className="px-6 py-4 bg-gray-50 text-gray-400 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-100 transition-all"
 								>
 									Garder
 								</button>
 								<button
 									onClick={handleConfirmDelete}
 									disabled={isDeleting}
-									className="px-6 py-4 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-red-200"
+									className="px-6 py-4 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-700 shadow-lg shadow-red-200 transition-all"
 								>
 									{isDeleting ? "Suppression..." : "Supprimer"}
 								</button>
