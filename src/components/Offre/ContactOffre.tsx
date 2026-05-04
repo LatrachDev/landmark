@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useMemo, memo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import emailjs from "@emailjs/browser";
 import Image from "next/image";
 import phoneImage from "@/assets/Landing/phone.png";
 import IconEmail from "@/assets/Landing/IconEmailI.png";
@@ -21,11 +20,6 @@ interface ServiceOption {
 	value: string;
 	label: string;
 	color: string;
-}
-
-interface SubmitStatus {
-	success: boolean;
-	message: string;
 }
 
 interface FormErrors {
@@ -65,7 +59,6 @@ const ContactOffre = memo(function ContactOffre(): JSX.Element {
 	);
 
 	const [errors, setErrors] = useState<FormErrors>({});
-	const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [showSuccessScreen, setShowSuccessScreen] = useState<boolean>(false);
 
@@ -178,67 +171,35 @@ const ContactOffre = memo(function ContactOffre(): JSX.Element {
 	);
 
 	const handleSubmit = useCallback(
-		async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+		(e: React.FormEvent<HTMLFormElement>): void => {
 			e.preventDefault();
 			setErrors({});
-			setSubmitStatus(null);
-			setIsSubmitting(true);
-			setShowSuccessScreen(false);
 
 			const newErrors: FormErrors = {};
-			if (!formData.project_name.trim())
-				newErrors.project_name = "اسم المشروع مطلوب";
+			if (!formData.project_name.trim()) newErrors.project_name = "اسم المشروع مطلوب";
 			if (!formData.full_name.trim()) newErrors.full_name = "الاسم مطلوب";
-			if (!formData.phone_number.trim())
-				newErrors.phone_number = "رقم الهاتف مطلوب";
-			if (!formData.service_type.trim())
-				newErrors.service_type = "نوع الخدمة مطلوب";
+			if (!formData.phone_number.trim()) newErrors.phone_number = "رقم الهاتف مطلوب";
+			if (!formData.service_type.trim()) newErrors.service_type = "نوع الخدمة مطلوب";
 
 			if (Object.keys(newErrors).length > 0) {
 				setErrors(newErrors);
-				setIsSubmitting(false);
 				return;
 			}
 
-			const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-			const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-			const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+			setIsSubmitting(true);
 
-			try {
-				if (!serviceId) throw new Error("EmailJS Service ID غير مُعرّف");
-				if (!templateId) throw new Error("EmailJS Template ID غير مُعرّف");
-				if (!publicKey) throw new Error("EmailJS Public Key غير مُعرّف");
+			const lines = [
+				`🔔 Nouveau devis - Landmark`,
+				`📋 Projet: ${formData.project_name}`,
+				`👤 Nom: ${formData.full_name}`,
+				`📱 Téléphone: ${formData.phone_number}`,
+				`🎯 Service: ${formData.service_type}`,
+			].join("\n");
+			window.open(`https://wa.me/212710220010?text=${encodeURIComponent(lines)}`, "_blank");
 
-				const templateParams = {
-					to_email: "contact.landmarkagency@gmail.com",
-					from_name: formData.full_name,
-					project_name: formData.project_name,
-					full_name: formData.full_name,
-					phone_number: formData.phone_number,
-					service_type: formData.service_type,
-					message: `طلب جديد من موقع لاندمارك:\n\n📋 اسم المشروع: ${formData.project_name}\n👤 الاسم الكامل: ${formData.full_name}\n📱 رقم الهاتف: ${formData.phone_number}\n🎯 نوع الخدمة: ${formData.service_type}`,
-					reply_to: formData.phone_number,
-				};
-
-				await emailjs.send(serviceId, templateId, templateParams, publicKey);
-
-				setFormData({
-					project_name: "",
-					full_name: "",
-					phone_number: "",
-					service_type: "",
-				});
-				setShowSuccessScreen(true);
-			} catch (error: unknown) {
-				console.error("EmailJS Error:", error);
-				setSubmitStatus({
-					success: false,
-					message:
-						"حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى أو التواصل عبر واتساب.",
-				});
-			} finally {
-				setIsSubmitting(false);
-			}
+			setFormData({ project_name: "", full_name: "", phone_number: "", service_type: "" });
+			setShowSuccessScreen(true);
+			setIsSubmitting(false);
 		},
 		[formData],
 	);
@@ -514,13 +475,6 @@ const ContactOffre = memo(function ContactOffre(): JSX.Element {
 										</button>
 									</div>
 
-									{submitStatus && !submitStatus.success && (
-										<div className="text-center p-4 rounded-lg bg-red-500/20 text-red-400">
-											<p style={{ fontFamily: "var(--font-madani-regular)" }}>
-												{submitStatus.message}
-											</p>
-										</div>
-									)}
 								</form>
 							</div>
 						</div>

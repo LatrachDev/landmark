@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import emailjs from "@emailjs/browser";
 import Reviews from "@/components/reviews/Reviews";
 
 import haythamImage from "@/assets/JPG/haythamContact.jpg";
@@ -31,10 +30,6 @@ export default function ContactPageClient() {
 	});
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [submitStatus, setSubmitStatus] = useState<{
-		success: boolean;
-		message: string;
-	} | null>(null);
 	const [showSuccess, setShowSuccess] = useState(false);
 
 	const handleChange = (
@@ -57,50 +52,24 @@ export default function ContactPageClient() {
 		});
 	};
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setIsSubmitting(true);
-		setSubmitStatus(null);
 
-		const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-		const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-		const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+		const lines = [
+			`🔔 Nouveau message - Landmark`,
+			`👤 Nom: ${formData.full_name}`,
+			`📱 Téléphone: ${formData.phone_number}`,
+			formData.company_name ? `🏢 Entreprise: ${formData.company_name}` : null,
+			formData.interests.length ? `🎯 Intérêts: ${formData.interests.join(" · ")}` : null,
+			formData.message ? `💬 ${formData.message}` : null,
+		].filter(Boolean).join("\n");
 
-		try {
-			if (!serviceId) throw new Error("EmailJS Service ID non défini");
-			if (!templateId) throw new Error("EmailJS Template ID non défini");
-			if (!publicKey) throw new Error("EmailJS Public Key non défini");
+		window.open(`https://wa.me/212710220010?text=${encodeURIComponent(lines)}`, "_blank");
 
-			const templateParams = {
-				to_email: "contact.landmarkagency@gmail.com",
-				from_name: formData.full_name,
-				full_name: formData.full_name,
-				phone_number: formData.phone_number,
-				company_name: formData.company_name,
-				message: formData.message,
-				interests: formData.interests.join(", "),
-				reply_to: formData.phone_number,
-			};
-
-			await emailjs.send(serviceId, templateId, templateParams, publicKey);
-			setShowSuccess(true);
-			setFormData({
-				full_name: "",
-				phone_number: "",
-				company_name: "",
-				message: "",
-				interests: [],
-			});
-		} catch (error) {
-			console.error("EmailJS Error:", error);
-			const errorMessage =
-				error instanceof Error
-					? error.message
-					: "Une erreur inconnue est survenue";
-			setSubmitStatus({ success: false, message: errorMessage });
-		} finally {
-			setIsSubmitting(false);
-		}
+		setShowSuccess(true);
+		setFormData({ full_name: "", phone_number: "", company_name: "", message: "", interests: [] });
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -126,12 +95,6 @@ export default function ContactPageClient() {
 									</h2>
 
 									<div className="lg:w-7/12">
-										{submitStatus && !submitStatus.success && (
-											<div className="mb-4 p-4 rounded bg-red-100 text-red-700">
-												{submitStatus.message}
-											</div>
-										)}
-
 										<form onSubmit={handleSubmit} className="space-y-6">
 											<div className="mb-6">
 												<h3 className="font-medium uppercase text-[#f2f2f2] mb-2">

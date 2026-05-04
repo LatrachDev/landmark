@@ -14,12 +14,7 @@ const Contact = () => {
 		interests: [] as string[],
 	});
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [submitStatus, setSubmitStatus] = useState<{
-		success: boolean;
-		message: string;
-	} | null>(null);
 	const [showSuccess, setShowSuccess] = useState(false);
-	const [errors, setErrors] = useState<Record<string, string[]>>({});
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -46,36 +41,25 @@ const Contact = () => {
 		});
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
-		setErrors({});
-		setSubmitStatus(null);
 
-		try {
-			await api.home.submitContact(formData);
+		api.home.submitContact(formData).catch(() => null);
 
-			setShowSuccess(true);
-			setFormData({
-				full_name: "",
-				phone_number: "",
-				company_name: "",
-				message: "",
-				interests: [],
-			});
-			setErrors({});
-		} catch (error: any) {
-			if (error.status === 422 && error.errors) {
-				setErrors(error.errors);
-			} else {
-				setSubmitStatus({
-					success: false,
-					message: error.message || "Erreur lors de l'envoi.",
-				});
-			}
-		} finally {
-			setIsSubmitting(false);
-		}
+		const lines = [
+			`🔔 Nouveau message - Landmark`,
+			`👤 Nom: ${formData.full_name}`,
+			`📱 Téléphone: ${formData.phone_number}`,
+			formData.company_name ? `🏢 Entreprise: ${formData.company_name}` : null,
+			formData.interests.length ? `🎯 Intérêts: ${formData.interests.join(" · ")}` : null,
+			formData.message ? `💬 ${formData.message}` : null,
+		].filter(Boolean).join("\n");
+		window.open(`https://wa.me/212710220010?text=${encodeURIComponent(lines)}`, "_blank");
+
+		setShowSuccess(true);
+		setFormData({ full_name: "", phone_number: "", company_name: "", message: "", interests: [] });
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -101,12 +85,6 @@ const Contact = () => {
 									</h3>
 
 									<div className="lg:w-7/12">
-										{submitStatus && !submitStatus.success && (
-											<div className="mb-4 p-4 rounded bg-red-100 text-red-700">
-												{submitStatus.message}
-											</div>
-										)}
-
 										<form onSubmit={handleSubmit} className="space-y-6">
 											{/* Interests */}
 											<div className="mb-6">
@@ -152,13 +130,8 @@ const Contact = () => {
 														type="text"
 														value={formData.full_name}
 														onChange={handleChange}
-														className={`text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 ${errors.full_name ? "border-red-500" : "border-gray-400"} bg-transparent focus:outline-none transition-colors duration-200`}
+														className="text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 border-gray-400 bg-transparent focus:outline-none transition-colors duration-200"
 													/>
-													{errors.full_name && (
-														<p className="text-sm text-red-600 mt-1">
-															{errors.full_name[0]}
-														</p>
-													)}
 												</div>
 
 												{/* Phone Number */}
@@ -169,13 +142,8 @@ const Contact = () => {
 														type="tel"
 														value={formData.phone_number}
 														onChange={handleChange}
-														className={`text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 ${errors.phone_number ? "border-red-500" : "border-gray-400"} bg-transparent focus:outline-none transition-colors duration-200`}
+														className="text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 border-gray-400 bg-transparent focus:outline-none transition-colors duration-200"
 													/>
-													{errors.phone_number && (
-														<p className="text-sm text-red-600 mt-1">
-															{errors.phone_number[0]}
-														</p>
-													)}
 												</div>
 
 												{/* Company Name */}
@@ -186,13 +154,8 @@ const Contact = () => {
 														type="text"
 														value={formData.company_name}
 														onChange={handleChange}
-														className={`text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 ${errors.company_name ? "border-red-500" : "border-gray-400"} bg-transparent focus:outline-none transition-colors duration-200`}
+														className="text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 border-gray-400 bg-transparent focus:outline-none transition-colors duration-200"
 													/>
-													{errors.company_name && (
-														<p className="text-sm text-red-600 mt-1">
-															{errors.company_name[0]}
-														</p>
-													)}
 												</div>
 
 												{/* Message */}
@@ -202,13 +165,8 @@ const Contact = () => {
 														placeholder="Parlez-Nous De Votre Entreprise"
 														value={formData.message}
 														onChange={handleChange}
-														className={`text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 ${errors.message ? "border-red-500" : "border-gray-400"} bg-transparent h-24 focus:outline-none transition-colors duration-200`}
+														className="text-[#f2f2f2] placeholder-[#f2f2f2] w-full p-3 border-b-2 border-gray-400 bg-transparent h-24 focus:outline-none transition-colors duration-200"
 													></textarea>
-													{errors.message && (
-														<p className="text-sm text-red-600 mt-1">
-															{errors.message[0]}
-														</p>
-													)}
 												</div>
 
 												{/* Submit Button */}
