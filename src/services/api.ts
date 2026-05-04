@@ -114,7 +114,6 @@ export const api = {
 			),
 	},
 
-
 	// Public API — home-page data (old backend, no auth needed)
 	home: {
 		getBlogs: (options: RequestInit = {}) =>
