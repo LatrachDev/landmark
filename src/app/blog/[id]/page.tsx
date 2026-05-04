@@ -8,7 +8,10 @@ type Props = {
 	params: Promise<{ id: string }>;
 };
 
-const API_URL = (process.env.API_URL || "http://localhost:5000").replace(/\/$/, "");
+const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+	/\/$/,
+	"",
+);
 
 const safeJsonLd = (obj: unknown) =>
 	JSON.stringify(obj)
@@ -52,7 +55,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	if (!blog) {
 		return {
 			title: "Blog Post | Landmark Agency",
-			description: "Découvrez nos articles de blog marketing digital et branding.",
+			description:
+				"Découvrez nos articles de blog marketing digital et branding.",
 		};
 	}
 
@@ -102,8 +106,18 @@ export default async function BlogDetailPage({ params }: Props) {
 		"@context": "https://schema.org",
 		"@type": "BreadcrumbList",
 		itemListElement: [
-			{ "@type": "ListItem", position: 1, name: "Accueil", item: "https://landmark.ma" },
-			{ "@type": "ListItem", position: 2, name: "Blog", item: "https://landmark.ma/blog" },
+			{
+				"@type": "ListItem",
+				position: 1,
+				name: "Accueil",
+				item: "https://landmark.ma",
+			},
+			{
+				"@type": "ListItem",
+				position: 2,
+				name: "Blog",
+				item: "https://landmark.ma/blog",
+			},
 			{ "@type": "ListItem", position: 3, name: blog.title },
 		],
 	};

@@ -75,7 +75,10 @@ const BlogClient = ({ blogs, hideHeader = false }: BlogClientProps) => {
 						className="overflow-hidden flex"
 					>
 						{blogs.map((post) => (
-							<SwiperSlide key={post.id} className="pb-12 font-jost h-auto flex">
+							<SwiperSlide
+								key={post.id}
+								className="pb-12 font-jost h-auto flex"
+							>
 								<BlogCard post={post} truncateText={truncateText} />
 							</SwiperSlide>
 						))}

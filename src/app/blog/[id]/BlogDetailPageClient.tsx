@@ -38,7 +38,10 @@ export default function BlogDetailPageClient({
 			}
 			if (line.match(/^\d+\.\d+\s+/)) {
 				return (
-					<h3 key={index} className="text-xl font-semibold mt-6 mb-2 text-[#445EF2]">
+					<h3
+						key={index}
+						className="text-xl font-semibold mt-6 mb-2 text-[#445EF2]"
+					>
 						{line}
 					</h3>
 				);
@@ -54,7 +57,10 @@ export default function BlogDetailPageClient({
 				);
 			}
 			return (
-				<p key={index} className="text-lg leading-relaxed mb-6 text-gray-700 font-medium">
+				<p
+					key={index}
+					className="text-lg leading-relaxed mb-6 text-gray-700 font-medium"
+				>
 					{line}
 				</p>
 			);
