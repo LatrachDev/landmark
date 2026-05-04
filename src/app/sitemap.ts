@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 const BASE_URL = "https://landmark.ma";
-const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 	/\/$/,
 	"",
 );
@@ -11,7 +11,7 @@ type ServiceEntry = { id: string; updatedAt: string };
 
 async function getBlogs(): Promise<BlogEntry[]> {
 	try {
-		const res = await fetch(`${API_URL}/api/blogs`, { cache: "no-store" });
+		const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/blogs`, { cache: "no-store" });
 		if (!res.ok) return [];
 		return res.json();
 	} catch {
@@ -21,7 +21,7 @@ async function getBlogs(): Promise<BlogEntry[]> {
 
 async function getServices(): Promise<ServiceEntry[]> {
 	try {
-		const res = await fetch(`${API_URL}/api/services`, { cache: "no-store" });
+		const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/services`, { cache: "no-store" });
 		if (!res.ok) return [];
 		return res.json();
 	} catch {

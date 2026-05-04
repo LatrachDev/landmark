@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 	/\/$/,
 	"",
 );
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
 	let res: Response;
 	try {
-		res = await fetch(`${API_URL}/api/auth/login`, {
+		res = await fetch(`${NEXT_PUBLIC_API_URL}/api/auth/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(body),

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 	/\/$/,
 	"",
 );
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
 	}
 
-	const res = await fetch(`${API_URL}/api/auth/me`, {
+	const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/auth/me`, {
 		headers: { Authorization: `Bearer ${token}` },
 	});
 

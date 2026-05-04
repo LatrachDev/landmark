@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 	/\/$/,
 	"",
 );
@@ -34,7 +34,7 @@ export async function proxyToBackend(
 
 	let res: Response;
 	try {
-		res = await fetch(`${API_URL}${backendPath}`, {
+		res = await fetch(`${NEXT_PUBLIC_API_URL}${backendPath}`, {
 			method: request.method,
 			headers,
 			body,

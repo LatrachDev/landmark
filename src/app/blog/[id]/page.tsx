@@ -8,7 +8,7 @@ type Props = {
 	params: Promise<{ id: string }>;
 };
 
-const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 	/\/$/,
 	"",
 );
@@ -27,7 +27,7 @@ function truncate(text: string, maxLength = 155) {
 
 async function getBlog(id: string): Promise<BlogType | null> {
 	try {
-		const res = await fetch(`${API_URL}/api/blogs/${id}`, {
+		const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/blogs/${id}`, {
 			next: { revalidate: 3600 },
 		});
 		if (!res.ok) return null;
@@ -39,7 +39,7 @@ async function getBlog(id: string): Promise<BlogType | null> {
 
 export async function generateStaticParams() {
 	try {
-		const res = await fetch(`${API_URL}/api/blogs`);
+		const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/blogs`);
 		if (!res.ok) return [];
 		const blogs: BlogType[] = await res.json();
 		return blogs.map((b) => ({ id: b.id }));

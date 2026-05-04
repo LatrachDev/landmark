@@ -7,7 +7,7 @@ interface Props {
 	params: Promise<{ id: string }>;
 }
 
-const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
 	/\/$/,
 	"",
 );
@@ -26,7 +26,7 @@ function safeJsonLd(data: object): string {
 
 async function getService(id: string): Promise<Service | null> {
 	try {
-		const res = await fetch(`${API_URL}/api/services/${id}`, {
+		const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/services/${id}`, {
 			next: { revalidate: 3600 },
 		});
 		if (!res.ok) return null;
@@ -38,7 +38,7 @@ async function getService(id: string): Promise<Service | null> {
 
 export async function generateStaticParams() {
 	try {
-		const res = await fetch(`${API_URL}/api/services`);
+		const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/services`);
 		if (!res.ok) return [];
 		const services: Service[] = await res.json();
 		return services.map((s) => ({ id: s.id }));
