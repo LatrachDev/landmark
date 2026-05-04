@@ -11,7 +11,6 @@ import { api } from "@/services/api";
 import type { Project } from "@/types/project";
 
 const ADMIN_TEAM = "/admin/team";
-const ADMIN_INBOX = "/admin/inbox";
 const ADMIN_PROJECTS = "/admin/projects";
 const ADMIN_BLOG = "/admin/blog";
 const ADMIN_CONTENT = "/admin/content";
@@ -197,7 +196,6 @@ export default function ProjectsManagementPage() {
 		{ title: "Projets", icon: "📁", path: ADMIN_PROJECTS, active: true },
 		{ title: "Contenu", icon: "✍️", path: ADMIN_CONTENT },
 		{ title: "Blog", icon: "🖼️", path: ADMIN_BLOG },
-		{ title: "Inbox", icon: "📨", path: ADMIN_INBOX },
 		{ title: "Services", icon: "🛠️", path: ADMIN_SERVICES },
 	];
 

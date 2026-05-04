@@ -216,7 +216,7 @@ const Videos = memo(function Videos(): JSX.Element {
 							>
 								<div
 									data-video-index={index}
-									className="relative w-[calc(100vw-10rem)] sm:w-full sm:max-w-[380px] md:max-w-[360px] aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden cursor-pointer group mb-4 shadow-2xl mx-auto will-change-transform"
+									className="relative w-[calc(100vw-10rem)] sm:w-full sm:max-w-[380px] md:max-w-[360px] aspect-9/16 bg-gray-800 rounded-lg overflow-hidden cursor-pointer group mb-4 shadow-2xl mx-auto will-change-transform"
 									onClick={() => handleVideoClick(video.id, index)}
 								>
 									{loadedVideos.has(index) ? (

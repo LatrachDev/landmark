@@ -12,7 +12,6 @@ import type { Blog, BlogCategory } from "@/types/blog";
 import { CATEGORY_LABELS } from "@/types/blog";
 
 const ADMIN_TEAM = "/admin/team";
-const ADMIN_INBOX = "/admin/inbox";
 const ADMIN_PROJECTS = "/admin/projects";
 const ADMIN_BLOG = "/admin/blog";
 const ADMIN_CONTENT = "/admin/content";
@@ -181,7 +180,6 @@ export default function BlogManagementPage() {
 		{ title: "Projets", icon: "📁", path: ADMIN_PROJECTS },
 		{ title: "Contenu", icon: "✍️", path: ADMIN_CONTENT },
 		{ title: "Blog", icon: "🖼️", path: ADMIN_BLOG, active: true },
-		{ title: "Inbox", icon: "📨", path: ADMIN_INBOX },
 		{ title: "Services", icon: "🛠️", path: ADMIN_SERVICES },
 	];
 
@@ -508,7 +506,7 @@ export default function BlogManagementPage() {
 			{/* Delete Modal */}
 			<AnimatePresence>
 				{showDeleteModal && (
-					<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-6">
+					<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-100 p-6">
 						<motion.div
 							initial={{ opacity: 0, scale: 0.9 }}
 							animate={{ opacity: 1, scale: 1 }}

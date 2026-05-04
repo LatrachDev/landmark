@@ -25,6 +25,21 @@ export const metadata: Metadata = {
 		title: "Services Marketing Digital Maroc | Landmark Agency",
 		description:
 			"Découvrez nos services marketing digital au Maroc : branding, développement web, création de contenu, photographie, design graphique.",
+		images: [
+			{
+				url: "/assets/Logotype/White.png",
+				width: 1200,
+				height: 630,
+				alt: "Services Landmark Agency - Marketing Digital Maroc",
+			},
+		],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Services Marketing Digital Maroc | Landmark Agency",
+		description:
+			"Branding, développement web, création de contenu, photographie et design graphique. Solutions créatives sur mesure au Maroc.",
+		images: ["/assets/Logotype/White.png"],
 	},
 };
 

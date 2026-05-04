@@ -11,7 +11,6 @@ import { api } from "@/services/api";
 
 // Route constants
 const ADMIN_TEAM = "/admin/team";
-const ADMIN_INBOX = "/admin/inbox";
 const ADMIN_PROJECTS = "/admin/projects";
 const ADMIN_BLOG = "/admin/blog";
 const ADMIN_CONTENT = "/admin/content";
@@ -210,7 +209,6 @@ export default function ContentManagementPage() {
 		{ title: "Projets", icon: "📁", path: ADMIN_PROJECTS },
 		{ title: "Contenu", icon: "✍️", path: ADMIN_CONTENT, active: true },
 		{ title: "Blog", icon: "🖼️", path: ADMIN_BLOG },
-		{ title: "Inbox", icon: "📨", path: ADMIN_INBOX },
 		{ title: "Services", icon: "🛠️", path: ADMIN_SERVICES },
 	];
 
@@ -426,7 +424,7 @@ export default function ContentManagementPage() {
 								key={content.id}
 								className="group flex flex-col h-full"
 							>
-								<div className="relative aspect-[9/16] w-full rounded-[2.5rem] overflow-hidden bg-black shadow-xl shadow-black/10">
+								<div className="relative aspect-9/16 w-full rounded-[2.5rem] overflow-hidden bg-black shadow-xl shadow-black/10">
 									<video
 										ref={(el) => {
 											videoRefs.current[content.id] = el;
@@ -542,7 +540,7 @@ export default function ContentManagementPage() {
 			{/* Delete Modal */}
 			<AnimatePresence>
 				{showDeleteModal && (
-					<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-6">
+					<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-100 p-6">
 						<motion.div
 							initial={{ opacity: 0, scale: 0.9 }}
 							animate={{ opacity: 1, scale: 1 }}
