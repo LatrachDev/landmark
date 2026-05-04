@@ -14,14 +14,36 @@ export const metadata: Metadata = {
 	title: "Blog Landmark - Conseils Marketing Digital & Branding Maroc",
 	description:
 		"Apprendre les meilleures stratégies marketing avec Landmark : conseils, astuces et tendances du marketing digital au Maroc. Découvrez nos articles sur le SEO, brand design et stratégies de communication.",
-	keywords:
-		"blog marketing digital maroc, conseils branding maroc, actualités marketing, tendances digitales maroc, stratégie contenu maroc, blog agence créative, Landmark blog",
+	keywords: [
+		"blog marketing digital maroc",
+		"conseils branding maroc",
+		"actualités marketing digital",
+		"tendances digitales maroc",
+		"stratégie contenu maroc",
+		"blog agence créative",
+		"Landmark blog",
+	],
 	alternates: { canonical: "/blog" },
 	openGraph: {
 		url: "https://landmark.ma/blog",
 		title: "Blog Landmark - Conseils Marketing Digital & Branding Maroc",
 		description:
 			"Apprendre les meilleures stratégies marketing avec Landmark : conseils, astuces et tendances du marketing digital au Maroc.",
+		images: [
+			{
+				url: "/assets/Logotype/White.png",
+				width: 1200,
+				height: 630,
+				alt: "Blog Landmark Agency - Marketing Digital Maroc",
+			},
+		],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Blog Landmark - Conseils Marketing Digital & Branding Maroc",
+		description:
+			"Conseils, astuces et tendances du marketing digital au Maroc. Articles sur le SEO, brand design et stratégies de communication.",
+		images: ["/assets/Logotype/White.png"],
 	},
 };
 

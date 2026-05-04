@@ -6,23 +6,39 @@ import Contact from "@/components/contact/Contact";
 import type { Project } from "@/types/project";
 
 export const metadata: Metadata = {
-	title: "Projects Landmark - Projets Marketing Digital & Branding Maroc",
+	title: "Portfolio - Projets Marketing Digital & Branding Maroc",
 	description:
 		"Découvrez notre portfolio de projets marketing digital et branding au Maroc. Réalisations créatives pour des marques ambitieuses à Oujda, Casablanca, Tanger : sites web, identités visuelles, contenus créatifs.",
 	keywords: [
-		"projects marketing digital maroc",
+		"portfolio marketing digital maroc",
 		"projets branding maroc",
-		"réalisations créatives",
-		"projects agence web maroc",
+		"réalisations créatives agence maroc",
+		"projets agence web maroc",
 		"projets Landmark",
 		"créations visuelles maroc",
-		"design graphique projects",
+		"design graphique projets",
 	],
-	alternates: {
-		canonical: "/projects",
-	},
+	alternates: { canonical: "/projects" },
 	openGraph: {
-		url: "https://Landmark.ma/projects",
+		url: "https://landmark.ma/projects",
+		title: "Portfolio Landmark - Projets Marketing Digital & Branding Maroc",
+		description:
+			"Découvrez nos réalisations créatives pour des marques ambitieuses au Maroc : identités visuelles, sites web, contenus digitaux.",
+		images: [
+			{
+				url: "/assets/Logotype/White.png",
+				width: 1200,
+				height: 630,
+				alt: "Portfolio Landmark Agency - Projets Créatifs Maroc",
+			},
+		],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Portfolio Landmark - Projets Marketing Digital Maroc",
+		description:
+			"Réalisations créatives pour des marques ambitieuses au Maroc : identités visuelles, sites web, contenus digitaux.",
+		images: ["/assets/Logotype/White.png"],
 	},
 };
 
@@ -80,12 +96,13 @@ export default async function ProjectsPage() {
 		getContents(),
 	]);
 
-	const structuredData = {
+	const portfolioSchema = {
 		"@context": "https://schema.org",
 		"@type": "ItemList",
-		name: "Projects Landmark Agency",
+		name: "Portfolio Landmark Agency",
 		description:
 			"Portfolio de projets marketing digital et créatifs réalisés par Landmark Agency au Maroc",
+		url: "https://landmark.ma/projects",
 		numberOfItems: projects.length,
 		itemListElement: projects.map((project, index) => ({
 			"@type": "CreativeWork",
@@ -95,16 +112,34 @@ export default async function ProjectsPage() {
 			creator: {
 				"@type": "Organization",
 				name: "Landmark Agency",
-				url: "https://Landmark.ma",
+				url: "https://landmark.ma",
 			},
 		})),
+	};
+
+	const breadcrumbSchema = {
+		"@context": "https://schema.org",
+		"@type": "BreadcrumbList",
+		itemListElement: [
+			{
+				"@type": "ListItem",
+				position: 1,
+				name: "Accueil",
+				item: "https://landmark.ma",
+			},
+			{ "@type": "ListItem", position: 2, name: "Portfolio" },
+		],
 	};
 
 	return (
 		<div className="font-['Jost'] relative min-h-screen bg-white">
 			<script
 				type="application/ld+json"
-				dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }}
+				dangerouslySetInnerHTML={{ __html: safeJsonLd(portfolioSchema) }}
+			/>
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
 			/>
 
 			<div

@@ -7,6 +7,9 @@ import { Toaster } from "react-hot-toast";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import NavigationProgress from "@/components/NavigationProgress";
 import SmoothMouseFollower from "@/components/SmoothMouseFollower";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import Script from "next/script";
+import { GA_MEASUREMENT_ID } from "@/lib/gtag";
 
 import localFont from "next/font/local";
 
@@ -254,7 +257,10 @@ export default function RootLayout({
 				<script
 					type="application/ld+json"
 					dangerouslySetInnerHTML={{
-						__html: JSON.stringify(organizationSchema),
+						__html: JSON.stringify(organizationSchema)
+							.replace(/</g, "\\u003c")
+							.replace(/>/g, "\\u003e")
+							.replace(/&/g, "\\u0026"),
 					}}
 				/>
 			</head>
@@ -317,6 +323,26 @@ export default function RootLayout({
 						},
 					}}
 				/>
+			<GoogleAnalytics />
+			<Script
+				strategy="afterInteractive"
+				src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+			/>
+			<Script
+				id="gtag-init"
+				strategy="afterInteractive"
+				dangerouslySetInnerHTML={{
+					__html: `
+						window.dataLayer = window.dataLayer || [];
+						function gtag(){dataLayer.push(arguments);}
+						gtag('js', new Date());
+						gtag('config', '${GA_MEASUREMENT_ID}', {
+							page_path: window.location.pathname,
+							send_page_view: false
+						});
+					`,
+				}}
+			/>
 			</body>
 		</html>
 	);

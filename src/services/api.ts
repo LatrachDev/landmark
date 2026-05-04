@@ -114,10 +114,6 @@ export const api = {
 			),
 	},
 
-	// Inbox (Contact messages)
-	inbox: {
-		getAll: () => fetch("/api/admin/inbox").then(handleResponse),
-	},
 
 	// Public API — home-page data (old backend, no auth needed)
 	home: {

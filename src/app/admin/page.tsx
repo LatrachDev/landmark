@@ -11,11 +11,11 @@ import { api } from "@/services/api";
 
 // Route constants
 const ADMIN_TEAM = "/admin/team";
-const ADMIN_INBOX = "/admin/inbox";
 const ADMIN_PROJECTS = "/admin/projects";
 const ADMIN_BLOG = "/admin/blog";
 const ADMIN_CONTENT = "/admin/content";
 const ADMIN_SERVICES = "/admin/services";
+const ADMIN_ANALYTICS = "/admin/analytics";
 
 export default function Dashboard() {
 	const router = useRouter();
@@ -121,27 +121,6 @@ export default function Dashboard() {
 			color: "bg-amber-50 text-amber-600",
 		},
 		{
-			title: "Boîte de réception",
-			desc: "Consultez les messages de vos clients potentiels.",
-			icon: (
-				<svg
-					className="w-8 h-8"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={1.5}
-						d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-					/>
-				</svg>
-			),
-			path: ADMIN_INBOX,
-			color: "bg-purple-50 text-purple-600",
-		},
-		{
 			title: "Gestion des services",
 			desc: "Modifiez les services proposés par l'agence.",
 			icon: (
@@ -167,6 +146,27 @@ export default function Dashboard() {
 			),
 			path: ADMIN_SERVICES,
 			color: "bg-rose-50 text-rose-600",
+		},
+		{
+			title: "Analytics",
+			desc: "Consultez les statistiques de trafic et performances du site.",
+			icon: (
+				<svg
+					className="w-8 h-8"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth={1.5}
+						d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+					/>
+				</svg>
+			),
+			path: ADMIN_ANALYTICS,
+			color: "bg-orange-50 text-orange-600",
 		},
 	];
 

@@ -1,71 +1,89 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 
-const baseUrl = "https://landmark.ma";
-const apiBaseUrl = (
-	process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma/"
-).replace(/\/$/, "");
+const BASE_URL = "https://landmark.ma";
+const API_URL = (process.env.API_URL || "http://localhost:5000").replace(
+	/\/$/,
+	"",
+);
+
+type BlogEntry = { id: string; updatedAt: string };
+type ServiceEntry = { id: string; updatedAt: string };
+
+async function getBlogs(): Promise<BlogEntry[]> {
+	try {
+		const res = await fetch(`${API_URL}/api/blogs`, { cache: "no-store" });
+		if (!res.ok) return [];
+		return res.json();
+	} catch {
+		return [];
+	}
+}
+
+async function getServices(): Promise<ServiceEntry[]> {
+	try {
+		const res = await fetch(`${API_URL}/api/services`, { cache: "no-store" });
+		if (!res.ok) return [];
+		return res.json();
+	} catch {
+		return [];
+	}
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	let blogs: MetadataRoute.Sitemap = [];
-	let services: MetadataRoute.Sitemap = [];
+	const [blogs, services] = await Promise.all([getBlogs(), getServices()]);
 
-	try {
-		const [blogsRes, servicesRes] = await Promise.all([
-			fetch(`${apiBaseUrl}/api/blog`),
-			fetch(`${apiBaseUrl}/api/services`),
-		]);
-
-		if (blogsRes.ok) {
-			const blogsData = await blogsRes.json();
-			blogs =
-				blogsData.blogs?.map((blog: any) => ({
-					url: `${baseUrl}/blog/${blog.id}`,
-					lastModified: new Date(blog.updated_at || blog.created_at),
-					changeFrequency: "weekly" as const,
-					priority: 0.7,
-				})) || [];
-		}
-
-		if (servicesRes.ok) {
-			const servicesData = await servicesRes.json();
-			services =
-				servicesData.services?.map((service: any) => ({
-					url: `${baseUrl}/services/${service.id}`,
-					lastModified: new Date(service.updated_at || service.created_at),
-					changeFrequency: "monthly" as const,
-					priority: 0.8,
-				})) || [];
-		}
-	} catch (error) {
-		console.error("Error generating sitemap:", error);
-	}
-
-	return [
+	const staticRoutes: MetadataRoute.Sitemap = [
 		{
-			url: baseUrl,
+			url: BASE_URL,
 			lastModified: new Date(),
-			changeFrequency: "daily",
-			priority: 1,
+			changeFrequency: "weekly",
+			priority: 1.0,
 		},
 		{
-			url: `${baseUrl}/blog`,
+			url: `${BASE_URL}/about`,
 			lastModified: new Date(),
-			changeFrequency: "daily",
-			priority: 0.9,
+			changeFrequency: "monthly",
+			priority: 0.7,
 		},
 		{
-			url: `${baseUrl}/services`,
+			url: `${BASE_URL}/services`,
 			lastModified: new Date(),
 			changeFrequency: "weekly",
 			priority: 0.9,
 		},
 		{
-			url: `${baseUrl}/contact`,
+			url: `${BASE_URL}/projects`,
+			lastModified: new Date(),
+			changeFrequency: "weekly",
+			priority: 0.8,
+		},
+		{
+			url: `${BASE_URL}/blog`,
+			lastModified: new Date(),
+			changeFrequency: "daily",
+			priority: 0.8,
+		},
+		{
+			url: `${BASE_URL}/contact`,
 			lastModified: new Date(),
 			changeFrequency: "monthly",
 			priority: 0.6,
 		},
-		...blogs,
-		...services,
 	];
+
+	const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
+		url: `${BASE_URL}/blog/${blog.id}`,
+		lastModified: new Date(blog.updatedAt),
+		changeFrequency: "monthly",
+		priority: 0.7,
+	}));
+
+	const serviceRoutes: MetadataRoute.Sitemap = services.map((service) => ({
+		url: `${BASE_URL}/services/${service.id}`,
+		lastModified: new Date(service.updatedAt),
+		changeFrequency: "monthly",
+		priority: 0.8,
+	}));
+
+	return [...staticRoutes, ...blogRoutes, ...serviceRoutes];
 }
