@@ -8,7 +8,7 @@ type Props = {
 	params: Promise<{ id: string }>;
 };
 
-const NEXT_PUBLIC_NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(
+const NEXT_PUBLIC_NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 	/\/$/,
 	"",
 );
