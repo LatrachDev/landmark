@@ -23,7 +23,7 @@ export default function BlogPageClient() {
 
 	useEffect(() => {
 		const apiBaseUrl = (
-			process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma"
+			process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma"
 		).replace(/\/$/, "");
 
 		fetch(`${apiBaseUrl}/api/blogs`, {

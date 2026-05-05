@@ -1,6 +1,6 @@
 // Public API base (old backend) — used only for public home-page data
 const PUBLIC_BASE = (
-	process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma"
+	process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma"
 ).replace(/\/$/, "");
 
 async function handleResponse(response: Response) {

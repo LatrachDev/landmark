@@ -2,7 +2,7 @@ import ProjectGrid from "./ProjectGrid";
 import type { Project } from "@/types/project";
 
 async function getProjects(): Promise<Project[]> {
-	const apiUrl = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
+	const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 		/\/$/,
 		"",
 	);

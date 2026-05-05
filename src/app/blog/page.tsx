@@ -47,14 +47,14 @@ export const metadata: Metadata = {
 	},
 };
 
-const NEXT_PUBLIC_NEXT_PUBLIC_API_URL = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 	/\/$/,
 	"",
 );
 
 async function getBlogs(): Promise<Blog[]> {
 	try {
-		const res = await fetch(`${NEXT_PUBLIC_NEXT_PUBLIC_API_URL}/api/blogs`, {
+		const res = await fetch(`${API_URL}/api/blogs`, {
 			next: { revalidate: 3600 },
 		});
 		if (!res.ok) return [];

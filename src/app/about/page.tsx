@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 };
 
 async function getTeamMembers(): Promise<TeamMember[]> {
-	const apiUrl = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
+	const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 		/\/$/,
 		"",
 	);

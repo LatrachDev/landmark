@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Project } from "@/types/project";
 
 interface ProjectCardProps {
@@ -13,6 +13,13 @@ export default function ProjectCard({
 	onProjectClick,
 }: ProjectCardProps) {
 	const [imageLoaded, setImageLoaded] = useState(false);
+	const imgRef = useRef<HTMLImageElement>(null);
+
+	useEffect(() => {
+		if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+			setImageLoaded(true);
+		}
+	}, []);
 
 	return (
 		<div className="flex flex-col mb-10 group">
@@ -35,10 +42,12 @@ export default function ProjectCard({
 					</div>
 				)}
 				<img
+					ref={imgRef}
 					src={project.thumbnailUrl}
 					alt={project.title}
 					className={`w-full h-full object-cover absolute inset-0 transition-all duration-300 group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
 					onLoad={() => setImageLoaded(true)}
+					onError={() => setImageLoaded(true)}
 				/>
 				<div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-50 hover:bg-black/50 flex items-center justify-center transition-all duration-300 z-10">
 					<span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-bold text-lg">

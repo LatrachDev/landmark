@@ -7,7 +7,7 @@ import Contact from "@/components/contact/Contact";
 import Footer from "@/components/footer/Footer";
 import WebSiteBG from "@/assets/BG/maskBg.png";
 
-const baseURL = "https://api.Landmark.ma/storage/";
+const baseURL = "https://api.landmark.ma/storage/";
 
 interface Service {
 	id: string | number;

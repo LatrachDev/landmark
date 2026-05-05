@@ -9,7 +9,7 @@ import type { Project } from "@/types/project";
 const storageUrl = (path: string) => {
 	if (!path) return "";
 	if (path.startsWith("http")) return path;
-	return `${(process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.landmark.ma").replace(/\/$/, "")}/storage/${path}`;
+	return `${(process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(/\/$/, "")}/storage/${path}`;
 };
 
 interface Content {

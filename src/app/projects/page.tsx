@@ -51,7 +51,7 @@ interface Content {
 }
 
 async function getProjects(): Promise<Project[]> {
-	const apiUrl = (process.env.NEXT_PUBLIC_NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
+	const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 		/\/$/,
 		"",
 	);
@@ -68,7 +68,7 @@ async function getProjects(): Promise<Project[]> {
 
 async function getContents(): Promise<Content[]> {
 	const baseUrl = (
-		process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.Landmark.ma"
+		process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma"
 	).replace(/\/$/, "");
 	try {
 		const res = await fetch(`${baseUrl}/api/portfolio`, {

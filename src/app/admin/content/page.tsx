@@ -429,7 +429,7 @@ export default function ContentManagementPage() {
 										ref={(el) => {
 											videoRefs.current[content.id] = el;
 										}}
-										src={`https://api.Landmark.ma/storage/${content.video}`}
+										src={`https://api.landmark.ma/storage/${content.video}`}
 										className={`absolute h-full w-full object-cover ${playingVideoId === content.id ? "opacity-100" : "opacity-0"}`}
 										onClick={() => togglePlayVideo(content.id)}
 										onEnded={() => setPlayingVideoId(null)}
@@ -439,7 +439,7 @@ export default function ContentManagementPage() {
 										<>
 											{content.thumbnail ? (
 												<img
-													src={`https://api.Landmark.ma/storage/${content.thumbnail}`}
+													src={`https://api.landmark.ma/storage/${content.thumbnail}`}
 													alt={content.title}
 													className="absolute h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
 												/>
