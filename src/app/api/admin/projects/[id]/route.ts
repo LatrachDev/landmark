@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { proxyToBackend } from "@/lib/api-proxy";
 
 export async function GET(
@@ -14,7 +15,12 @@ export async function PUT(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params;
-	return proxyToBackend(request, `/api/projects/${id}`);
+	const response = await proxyToBackend(request, `/api/projects/${id}`);
+	if (response.status >= 200 && response.status < 300) {
+		revalidatePath("/projects");
+		revalidatePath("/");
+	}
+	return response;
 }
 
 export async function DELETE(
@@ -22,5 +28,10 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params;
-	return proxyToBackend(request, `/api/projects/${id}`);
+	const response = await proxyToBackend(request, `/api/projects/${id}`);
+	if (response.status >= 200 && response.status < 300) {
+		revalidatePath("/projects");
+		revalidatePath("/");
+	}
+	return response;
 }

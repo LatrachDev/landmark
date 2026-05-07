@@ -24,26 +24,15 @@ function safeJsonLd(data: object): string {
 		.replace(/&/g, "\\u0026");
 }
 
+export const dynamic = "force-dynamic";
+
 async function getService(id: string): Promise<Service | null> {
 	try {
-		const res = await fetch(`${API_URL}/api/services/${id}`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${API_URL}/api/services/${id}`, { cache: "no-store" });
 		if (!res.ok) return null;
 		return res.json();
 	} catch {
 		return null;
-	}
-}
-
-export async function generateStaticParams() {
-	try {
-		const res = await fetch(`${API_URL}/api/services`);
-		if (!res.ok) return [];
-		const services: Service[] = await res.json();
-		return services.map((s) => ({ id: s.id }));
-	} catch {
-		return [];
 	}
 }
 

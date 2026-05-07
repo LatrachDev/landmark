@@ -50,15 +50,15 @@ interface Content {
 	views: number | string;
 }
 
+export const dynamic = "force-dynamic";
+
 async function getProjects(): Promise<Project[]> {
 	const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 		/\/$/,
 		"",
 	);
 	try {
-		const res = await fetch(`${apiUrl}/api/projects`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${apiUrl}/api/projects`, { cache: "no-store" });
 		if (!res.ok) return [];
 		return res.json();
 	} catch {
@@ -71,9 +71,7 @@ async function getContents(): Promise<Content[]> {
 		process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma"
 	).replace(/\/$/, "");
 	try {
-		const res = await fetch(`${baseUrl}/api/portfolio`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${baseUrl}/api/portfolio`, { cache: "no-store" });
 		if (!res.ok) return [];
 		const data = await res.json();
 		return data?.contents ?? [];

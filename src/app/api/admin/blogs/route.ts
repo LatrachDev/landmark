@@ -1,12 +1,16 @@
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { proxyToBackend } from "@/lib/api-proxy";
 
 export async function GET(request: NextRequest) {
-	console.log("[BLOGS ROUTE] GET /api/admin/blogs hit");
 	return proxyToBackend(request, "/api/blogs");
 }
 
 export async function POST(request: NextRequest) {
-	console.log("[BLOGS ROUTE] POST /api/admin/blogs hit");
-	return proxyToBackend(request, "/api/blogs");
+	const response = await proxyToBackend(request, "/api/blogs");
+	if (response.status >= 200 && response.status < 300) {
+		revalidatePath("/blog");
+		revalidatePath("/");
+	}
+	return response;
 }

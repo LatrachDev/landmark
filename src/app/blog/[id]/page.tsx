@@ -25,26 +25,15 @@ function truncate(text: string, maxLength = 155) {
 	return text.substring(0, maxLength).split(" ").slice(0, -1).join(" ") + "...";
 }
 
+export const dynamic = "force-dynamic";
+
 async function getBlog(id: string): Promise<BlogType | null> {
 	try {
-		const res = await fetch(`${API_URL}/api/blogs/${id}`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${API_URL}/api/blogs/${id}`, { cache: "no-store" });
 		if (!res.ok) return null;
 		return res.json();
 	} catch {
 		return null;
-	}
-}
-
-export async function generateStaticParams() {
-	try {
-		const res = await fetch(`${API_URL}/api/blogs`);
-		if (!res.ok) return [];
-		const blogs: BlogType[] = await res.json();
-		return blogs.map((b) => ({ id: b.id }));
-	} catch {
-		return [];
 	}
 }
 

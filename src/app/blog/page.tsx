@@ -47,6 +47,8 @@ export const metadata: Metadata = {
 	},
 };
 
+export const dynamic = "force-dynamic";
+
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 	/\/$/,
 	"",
@@ -54,9 +56,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").r
 
 async function getBlogs(): Promise<Blog[]> {
 	try {
-		const res = await fetch(`${API_URL}/api/blogs`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${API_URL}/api/blogs`, { cache: "no-store" });
 		if (!res.ok) return [];
 		return res.json();
 	} catch {

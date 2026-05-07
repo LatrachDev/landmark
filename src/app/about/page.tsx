@@ -45,15 +45,15 @@ export const metadata: Metadata = {
 	},
 };
 
+export const dynamic = "force-dynamic";
+
 async function getTeamMembers(): Promise<TeamMember[]> {
 	const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 		/\/$/,
 		"",
 	);
 	try {
-		const res = await fetch(`${apiUrl}/api/team`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${apiUrl}/api/team`, { cache: "no-store" });
 		if (!res.ok) return [];
 		return res.json();
 	} catch {

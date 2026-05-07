@@ -7,9 +7,7 @@ async function getProjects(): Promise<Project[]> {
 		"",
 	);
 	try {
-		const res = await fetch(`${apiUrl}/api/projects`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${apiUrl}/api/projects`, { cache: "no-store" });
 		if (!res.ok) return [];
 		const data: Project[] = await res.json();
 		return data.slice(0, 3);

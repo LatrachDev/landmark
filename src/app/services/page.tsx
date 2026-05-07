@@ -43,15 +43,15 @@ export const metadata: Metadata = {
 	},
 };
 
+export const dynamic = "force-dynamic";
+
 async function getServices(): Promise<Service[]> {
 	const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.landmark.ma").replace(
 		/\/$/,
 		"",
 	);
 	try {
-		const res = await fetch(`${apiUrl}/api/services`, {
-			next: { revalidate: 3600 },
-		});
+		const res = await fetch(`${apiUrl}/api/services`, { cache: "no-store" });
 		if (!res.ok) return [];
 		return res.json();
 	} catch {

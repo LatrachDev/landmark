@@ -4,6 +4,9 @@ const PUBLIC_BASE = (
 ).replace(/\/$/, "");
 
 async function handleResponse(response: Response) {
+	if (response.status === 204) {
+		return null;
+	}
 	const data = await response.json();
 	if (!response.ok) {
 		return Promise.reject(data);
